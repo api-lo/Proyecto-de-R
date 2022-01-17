@@ -30,18 +30,19 @@ header <- dashboardHeader(title = "Terrae")
 
 
 sidebar <- dashboardSidebar(sidebarMenu(
-  menuItem("Intruducción", tabName = "Inicio", icon = icon("th")),
+  menuItem("Dashboard", tabName = "Inicio", icon = icon("th")),
   menuItem("Project information", tabName = "Informacion", icon = icon("dashboard")),
-  menuItem("Social network analysis", tabName = "SNA", icon = icon("bar-chart-o")),
+  menuItem("Social network analysis", icon = icon("bar-chart-o"),
+           menuSubItem("¿Qué es SNA?"),
+           menuSubItem("SNA(magnitud y produndidad)",tabName = "SNA"),
+           menuSubItem("SNA(Relación entre paises)"),
+           menuSubItem("SNA(Duración del evento)")),
   menuItem("Data set", tabName = "Conjunto de datos", icon = icon("table")),
   menuItem("Concepts", tabName = "Conceptos", icon = icon("question"))
   
 ))
 
 body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo de Terremotos'"),
-                         
-                         ### Styles
-                         
                          tags$style(HTML(".fa-dashboard { font-size: 15px; }")),
                          tags$style(HTML(".fa-globe { font-size: 20px; }")),
                          tags$style(HTML(".fa-barcode { font-size: 20px; }")),
@@ -64,8 +65,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          tags$style(HTML('.navbar-custom-menu> .navbar-nav> li:last-child > .dropdown-menu > h4 {width:0px; font-size:0px; padding:0px; margin:0px;}')),
                          tags$style(HTML('.navbar-custom-menu> .navbar-nav> li:last-child > .dropdown-menu > p {width:0px; font-size:0px; padding:0px; margin:0px;}')),
                          
-                         tabItems(tabItem(tabName = "Inicio",
-                                          ## columna uno
+                         tabItems(
+                           tabItem(tabName = "Inicio",
                                           h1("Cantidad de sismos  Fecha: ", Sys.Date()),
                                           fluidRow(
                                             valueBoxOutput("Cantidad_anio"),
@@ -95,7 +96,10 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                               plotlyOutput("pastelAnioActual")
                                             )
                                           )
-                         ),   
+                         ), tabItem( 
+                           tabName = "Informacion",
+                           
+                                      ), 
                          tabItem(
                            tabName = "SNA",
                            h3("Redes según la categoría de la magnitud"),
@@ -119,7 +123,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                            fluidRow(
                              column(4,box( width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Superficial hasta 70 km", status = "primary", solidHeader = TRUE, visNetworkOutput("snaSuperficial"))),
                              column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Intermedio entre 70km y 300 km", status = "primary", solidHeader = TRUE,  visNetworkOutput("snaIntermedio"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Profundo mayor de 300km", status = "primary", solidHeader = TRUE,  visNetworkOutput("snaProfundo")))
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Profundo mayor de 300km", status = "primary", solidHeader = TRUE,visNetworkOutput("snaProfundo")))
                              
                            ),
                            fluidRow(
@@ -339,54 +343,69 @@ server <- function(input, output) {
   # -----------------------------SOCIAL NETWORK ANALITY PARA LA MAGNITUD--------------------------------------
   output$snaMenor <- renderVisNetwork({
     graficoSnaMenor<-NULL
+   
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
-      # data <- data %>% filter(Group=="Sudamerica"   & tipoM =="Ligero" )
+
+      
       data <- data %>% filter(Group==input$regionSNA & tipoM =="Menor" )
-      dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
-      dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
-      snaMenor <- graph.data.frame(dataSnaM, directed=T)
-      nrNodos<-as.data.frame(degree(snaMenor))
-      colnames(nrNodos)<-c("n")
-      edgesM<-as_data_frame(snaMenor, what="edges")
-      nodesM<-data.frame(V(snaMenor)$name)
-      colnames(nodesM) <- c("pais")
-      dfx<-edgesM %>%
-        group_by(from, to)%>%
-        tally()
-      Pfx<-dataSnaM %>%
-        group_by(pais,Group)%>%
-        tally()
-      for(i in 1:nrow(nodesM))
+      if(nrow(data)>0)
       {
-        if(nodesM$pais[i]=="Menor" ||
-           nodesM$pais[i]=="Ligero" ||
-           nodesM$pais[i]=="Moderado" ||
-           nodesM$pais[i]=="Fuerte" || nodesM$pais[i]=="Mayor" )
+    
+        dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
+        dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
+        snaMenor <- graph.data.frame(dataSnaM, directed=T)
+        nrNodos<-as.data.frame(degree(snaMenor))
+        colnames(nrNodos)<-c("n")
+        edgesM<-as_data_frame(snaMenor, what="edges")
+        nodesM<-data.frame(V(snaMenor)$name)
+        colnames(nodesM) <- c("pais")
+        dfx<-edgesM %>%
+          group_by(from, to)%>%
+          tally()
+        Pfx<-dataSnaM %>%
+          group_by(pais,Group)%>%
+          tally()
+        for(i in 1:nrow(nodesM))
         {
-          nodesM$Group[i]<-"categoria"
-        }else
-        {
-          nodesM$Group[i]<-"pais"
+          if(nodesM$pais[i]=="Menor" ||
+             nodesM$pais[i]=="Ligero" ||
+             nodesM$pais[i]=="Moderado" ||
+             nodesM$pais[i]=="Fuerte" || nodesM$pais[i]=="Mayor" )
+          {
+            nodesM$Group[i]<-"categoria"
+          }else
+          {
+            nodesM$Group[i]<-"pais"
+          }
+          
         }
+        nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
+        edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
+        graficoSnaMenor<- visNetwork(nodesM,edgesM,
+                                     layout = "layout_in_circle" )%>% visIgraphLayout() %>%
+          visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
+          visOptions(highlightNearest = TRUE,
+                     nodesIdSelection = TRUE) %>%
+          visLayout(randomSeed = 123)
         
+        
+      }else
+      {
+       
       }
-      nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
-      edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
-                                   layout = "layout_in_circle" )%>% visIgraphLayout() %>%
-        visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
-        visOptions(highlightNearest = TRUE,
-                   nodesIdSelection = TRUE)
-      # shinyjs::hide(id =  "img2")
+     
+      
     }
     else
     { 
-      # shinyjs::show(id = "img2")
+      
+     
     }
     
     graficoSnaMenor
+    
   })
   output$snaLigero <- renderVisNetwork({
     graficoSnaMenor<-NULL
@@ -716,6 +735,7 @@ server <- function(input, output) {
   })  
   output$snaProfundo <- renderVisNetwork({
     snaProfundo<-NULL
+    graficoSnaMenor<-NULL
     data <-  tbl_clasificado_por_profundidad
     if(input$regionSNA  != "All" )
     {
@@ -755,14 +775,15 @@ server <- function(input, output) {
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
-      # shinyjs::hide(id =  "img2")
+      
     }
     else
     {
-      # shinyjs::show(id = "img2")
+       
     }
-    
+ 
     graficoSnaMenor
+    
   })
   
 }
