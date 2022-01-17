@@ -98,8 +98,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          ),   
                          tabItem(
                            tabName = "SNA",
-                           h3("Sección de redes segun la categoría de la magnitud"),
-                           p(""),
+                           h3("Redes según la categoría de la magnitud"),
+                           hr(""),
                            fluidRow(column(4, selectInput("regionSNA",
                                                           "Regiones:",
                                                           c("All",
@@ -107,12 +107,20 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                            )
                            ,
                            fluidRow(
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Menor", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMenor"))),
-                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Ligero", status = "warning", solidHeader = TRUE, visNetworkOutput("snaLigero"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Moderado", status = "warning", solidHeader = TRUE, visNetworkOutput("snaModerado"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Fuerte", status = "warning", solidHeader = TRUE, visNetworkOutput("snaFuerte"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Mayor", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMayor"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Grandes", status = "warning", solidHeader = TRUE, visNetworkOutput("snaGran")))
+                             column(4,box(classs="ASDAS", width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Menor entre 1.0 - 3.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMenor"))),
+                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Ligero entre 4.0 - 4.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaLigero"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Moderado entre 5.0 -5.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaModerado"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Fuerte entre 6.0-6.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaFuerte"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Mayor entre 7.0-7.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMayor"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Grandes mayor de 8.0", status = "warning", solidHeader = TRUE, visNetworkOutput("snaGran")))
+                           ),
+                           h3("Redes según la profundida"),
+                           hr(),
+                           fluidRow(
+                             column(4,box( width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Superficial hasta 70 km", status = "primary", solidHeader = TRUE, visNetworkOutput("snaSuperficial"))),
+                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Intermedio entre 70km y 300 km", status = "primary", solidHeader = TRUE,  visNetworkOutput("snaIntermedio"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Profundo mayor de 300km", status = "primary", solidHeader = TRUE,  visNetworkOutput("snaProfundo")))
+                             
                            ),
                            fluidRow(
                              # GRAFICO UNO
@@ -126,13 +134,13 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          )
 )
 
-# WEB SCRAPING ******************************************************************************************************************
+# WEB SCRAPING ------------------------------------------------------------------------------------------------------
 library(rvest)
 dt_sudamerica<- read_html("http://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=-0.014&minlat=-39.910&maxlon=-57.656&minlon=-89.283&sbl=1&pbl=1&caller=self&name=Western%20South%20America&zm=4&mt=ter&rgn=Western%20South%20America&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_centroamerica<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=28.770&minlat=4.920&maxlon=-53.440&minlon=-118.480&sbl=1&pbl=1&caller=self&name=Central%20America&zm=4&mt=ter&rgn=Central%20America&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_sudesteasiatico<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=37.720&minlat=9.800&maxlon=107.580&minlon=64.510&sbl=1&pbl=1&caller=self&name=S.E.%20Asia%20Region&zm=4&mt=ter&rgn=S.E.%20Asia%20Region&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_mediterraneo_oriental<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=48.220&minlat=31.580&maxlon=45.880&minlon=7.560&sbl=1&pbl=1&caller=self&name=E.%20Mediterranean&zm=5&mt=ter&rgn=E.%20Mediterranean&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
-# dt_norte_america<- read_html("http://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=55.826&minlat=15.877&maxlon=-52.689&minlon=-135.746&sbl=1&pbl=1&caller=self&zm=2&mt=ter&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
+
 
 #------------------------------------------------------EXTRAER TABLAS ----------------------------------------------------------
 
@@ -156,35 +164,20 @@ tbl_mediterraneo_oriental<- dt_mediterraneo_oriental %>%
 tbl_mediterraneo_oriental<- tbl_mediterraneo_oriental[[1]]
 tbl_mediterraneo_oriental$Group<-"Mediterraneo_oriental"
 
-# tbl_norte_america<- dt_norte_america %>%
-#   html_table()
-# tbl_norte_america<- tbl_norte_america[[1]]
-# tbl_norte_america$Group<-"Norte_America"
-
 # ---------------------------Unión------------------------------
 tabla_sis<- tbl_sudamerica
-
 tabla_sis<-rbind(tabla_sis,tbl_centroamerica)
 tabla_sis<-rbind(tabla_sis,tbl_sudesteasiatico)
 tabla_sis<-rbind(tabla_sis,tbl_mediterraneo_oriental)
-# tabla_sis<-rbind(tabla_sis,tbl_norte_america)
-
 tabla_base <- subset(tabla_sis, select = -c(4,10,11))
 
 # FECHA ACTUAL ******************************************************************************************************************
-
 dia <- as.numeric(format(Sys.Date(),'%d'))
 mes <- as.numeric(format(Sys.Date(),'%m'))
 anio<- as.numeric(format(Sys.Date(),'%Y'))
-
 # CONJUNTO DE DATOS PARA EL INICIO***********************************************************************************************
 tabla_para_inicio <-tabla_base %>% filter(Year==anio)
-tabla_anio_pasado <-tabla_base %>% filter(Year==(anio-1))
-
 # DATOS PARA PARA LA GRAFICAS PASTEL-----------------------------------------------
-InformePastel_anio_pasado<-tabla_anio_pasado %>%                     
-  group_by(Month) %>%     
-  tally() 
 InformePastel_anio_actual<-tabla_para_inicio %>%                     
   group_by(Month) %>%     
   tally() 
@@ -200,21 +193,13 @@ pastelAnioActual <- pastelAnioActual %>% layout(title = ('Cantida de sismo del a
                                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
-
-# Pastel dos-----------------------------------------------------------------------------------------------
-pastelAnioPasado <- plot_ly( labels=InformePastel_anio_pasado$Month,values=InformePastel_anio_pasado$n, 
-                             textinfo='label+percent',
-                             insidetextorientation='radial')
-pastelAnioPasado <- pastelAnioPasado %>% add_pie(hole = 0.6)
-pastelAnioPasado <- pastelAnioPasado %>% layout(title = ('Cantida de sismo del año pasado'),
-                                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-
 # CLASIFICACION DE DATOS -------------------------------------------------------------------------------------- 
 # AÑO ACTUA
 tbl_clasificado_anio_actual<-tabla_para_inicio %>% separate(8, c("region", "pais"), ", ", extra = "merge")
 tbl_clasificado_anio_actual<- na.omit(tbl_clasificado_anio_actual)
+tbl_clasificado_por_profundidad<-tbl_clasificado_anio_actual
 
+tbl_clasificado_anio_actual
 tbl_clasificado_anio_actual$tipoM <- 
   with(tbl_clasificado_anio_actual,
        ifelse(tbl_clasificado_anio_actual$Mag > 0 & tbl_clasificado_anio_actual$Mag <=3.9, "Menor",
@@ -224,60 +209,16 @@ tbl_clasificado_anio_actual$tipoM <-
                                    ifelse(tbl_clasificado_anio_actual$Mag >=7 & tbl_clasificado_anio_actual$Mag <=7.9,"Mayor",
                                           ifelse(tbl_clasificado_anio_actual$Mag >=8, "Gran",0)))))))
 
-# AÑO PASADO
-tbl_clasificado_anio_pasado<-tabla_anio_pasado %>% separate(8, c("region", "pais"), ", ", extra = "merge")
-tbl_clasificado_anio_pasado<- na.omit(tbl_clasificado_anio_pasado)
-
-tbl_clasificado_anio_pasado$tipoM <- 
-  with(tbl_clasificado_anio_pasado,
-       ifelse(tbl_clasificado_anio_pasado$Mag > 0 & tbl_clasificado_anio_pasado$Mag <=3.9, "Menor",
-              ifelse(tbl_clasificado_anio_pasado$Mag >=4 & tbl_clasificado_anio_pasado$Mag <=4.9, "Ligero",
-                     ifelse(tbl_clasificado_anio_pasado$Mag >=5 & tbl_clasificado_anio_pasado$Mag <=5.9, "Moderado",
-                            ifelse(tbl_clasificado_anio_pasado$Mag >=6 & tbl_clasificado_anio_pasado$Mag <=6.9, "Fuerte",
-                                   ifelse(tbl_clasificado_anio_pasado$Mag >=7 & tbl_clasificado_anio_pasado$Mag <=7.9,"Mayor",
-                                          ifelse(tbl_clasificado_anio_pasado$Mag >=8, "Gran",0)))))))
-
+tbl_clasificado_por_profundidad$tipoDepth.km <-
+  with(tbl_clasificado_por_profundidad,ifelse(tbl_clasificado_por_profundidad$`Depth km` >= 0 & tbl_clasificado_por_profundidad$`Depth km` <=70, "Superficial",
+                            ifelse(tbl_clasificado_por_profundidad$`Depth km` >=70 & tbl_clasificado_por_profundidad$`Depth km` <=300, "Intermedio",
+                            ifelse(tbl_clasificado_por_profundidad$`Depth km` >=301,"Profundo","Error"))))
 
 # GRAFICO PASTEL DE LA CATEGORIA-----------------------------------------------------------------------------
-
-# Grafico uno--------------------------- 
-
-# grafico_categoria_actual<-tbl_clasificado_anio_actual %>%
-#   group_by(pais) %>%
-#   tally()
-# 
-# grafico_categoria_actual <- plot_ly( labels=grafico_categoria_actual$pais,values=grafico_categoria_actual$n, 
-#                              textinfo='label+percent',
-#                              insidetextorientation='radial')
-# grafico_categoria_actual <- grafico_categoria_actual %>% add_pie(hole = 0.6)
-# grafico_categoria_actual <- grafico_categoria_actual %>% layout(title = ('Cantida de sismo del año pasado'),
-#                                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-#                                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-# 
-# 
-# 
-# # Grafico dos---------------------------
-# grafico_categoria_pasado<-tbl_clasificado_anio_pasado %>%
-#   group_by(pais) %>%
-#   tally()
-# 
-# grafico_categoria_pasado <- plot_ly( labels=grafico_categoria_pasado$pais,values=grafico_categoria_pasado$n, 
-#                                     textinfo='label+percent',
-#                                     insidetextorientation='radial')
-# grafico_categoria_pasado <- grafico_categoria_pasado %>% add_pie(hole = 0.6)
-# grafico_categoria_pasado <- grafico_categoria_pasado %>% layout(title = ('Cantida de sismo del año pasado'),
-#                                                               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-#                                                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-# 
-
-
-
 #REDES SOCIAL NETWORCK ANALITY********************************************************************************
 # REDES ACTUALES---------------------------------------------------------------------------------------------
 tbl_redes_actual<- subset(tbl_clasificado_anio_actual, select = -c(1,2,3,5,6,7,8))
 tbl_redes_actual<-subset(tbl_redes_actual, select = c(2,4,1,3))
-# tbl_net<-subset(tbl_redes_actual, select = c(1,2))
-#Generacion de nodos y vertices con library(igraph)
 datosAnalizar <- graph.data.frame(tbl_redes_actual, directed=T)
 V(datosAnalizar)
 E(datosAnalizar)
@@ -325,7 +266,7 @@ edges1 <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c
 
 
 graficoUno<- visNetwork(nodes1,edges1,
-                        layout = "layout_in_circle" )%>% visIgraphLayout() %>%
+                        layout = "layout_in_circle" )%>% visIgraphLayout() %>% 
   visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
   visOptions(selectedBy = "group",
              highlightNearest = TRUE,
@@ -334,14 +275,7 @@ graficoUno<- visNetwork(nodes1,edges1,
   visInteraction(navigationButtons = TRUE)
 
 
- data <- toVisNetworkData(datosAnalizar)
- colnames(data$nodes)<-c("id","label","value")
- colnames(data$edges)<-c("from","to","label","Group","value")
- datanodes<-data$nodes
- dataedges<-data$edges
- dataedges$title<-data$edges$label
 
- visNetwork(data$nodes, dataedges)
  
 
 ui <- dashboardPage(header,sidebar,body)
@@ -370,7 +304,7 @@ server <- function(input, output) {
     )
   })
   # TABLAS*************************************************************************************************
-  # ---------------------TABLA INFORMACIÓN GENERAL
+  # ---------------------TABLA INFORMACIÓN GENERAL-------------------------------------
   output$datos<-DT::renderDataTable({
     data<-tbl_clasificado_anio_actual
     if(input$region  != "All" )
@@ -389,9 +323,9 @@ server <- function(input, output) {
   }
   )
   
-  output$graficoUno<- renderVisNetwork({graficoUno}
-    
-  )
+  # output$graficoUno<- renderVisNetwork({graficoUno}
+  #   
+  # )
   # GRÁFICOS PASTE*****************************************************************************************
   # -----------------------GRÁFICO DE TERREMOTOS EN MESES ANIO ACTUAL--------------------------------------
   output$pastelAnioActual <- renderPlotly(
@@ -402,7 +336,7 @@ server <- function(input, output) {
     pastelAnioPasado
   )
   
-  # SOCIAL NETWORK ANALITY*******************************************************************************************************
+  # -----------------------------SOCIAL NETWORK ANALITY PARA LA MAGNITUD--------------------------------------
   output$snaMenor <- renderVisNetwork({
     graficoSnaMenor<-NULL
     data <-  tbl_clasificado_anio_actual
@@ -678,6 +612,159 @@ server <- function(input, output) {
     }
     graficoSnaMenor
   })
+  
+  #----------------------------SOCIAL NETWORK ANALITY PARA LA PROFUNDIDA
+  output$snaSuperficial <- renderVisNetwork({
+    snaSuperficial<-NULL
+    data <-  tbl_clasificado_por_profundidad 
+    if(input$regionSNA  != "All" )
+    {
+
+      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Superficial" )
+      dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
+      dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
+      snaMenor <- graph.data.frame(dataSnaM, directed=T)
+      nrNodos<-as.data.frame(degree(snaMenor))
+      colnames(nrNodos)<-c("n")
+      edgesM<-as_data_frame(snaMenor, what="edges")
+      nodesM<-data.frame(V(snaMenor)$name)
+      colnames(nodesM) <- c("pais")
+      dfx<-edgesM %>%
+        group_by(from, to)%>%
+        tally()
+      Pfx<-dataSnaM %>%
+        group_by(pais,Group)%>%
+        tally()
+      for(i in 1:nrow(nodesM))
+      {
+        if(nodesM$pais[i]=="Superficial" ||
+           nodesM$pais[i]=="Intermedio" ||
+           nodesM$pais[i]=="Profundo" )
+        {
+          nodesM$Group[i]<-"categoria"
+        }else
+        {
+          nodesM$Group[i]<-"pais"
+        }
+
+      }
+      nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
+      edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
+      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+                                   layout = "layout_in_circle" )%>% visIgraphLayout() %>%
+        visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
+        visOptions(highlightNearest = TRUE,
+                   nodesIdSelection = TRUE)
+      # shinyjs::hide(id =  "img2")
+    }
+    else
+    {
+      # shinyjs::show(id = "img2")
+    }
+
+    graficoSnaMenor
+  })
+  output$snaIntermedio <- renderVisNetwork({
+    snaIntermedio<-NULL
+    data <-  tbl_clasificado_por_profundidad
+    if(input$regionSNA  != "All" )
+    {
+      
+      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Intermedio" )
+      dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
+      dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
+      snaMenor <- graph.data.frame(dataSnaM, directed=T)
+      nrNodos<-as.data.frame(degree(snaMenor))
+      colnames(nrNodos)<-c("n")
+      edgesM<-as_data_frame(snaMenor, what="edges")
+      nodesM<-data.frame(V(snaMenor)$name)
+      colnames(nodesM) <- c("pais")
+      dfx<-edgesM %>%
+        group_by(from, to)%>%
+        tally()
+      Pfx<-dataSnaM %>%
+        group_by(pais,Group)%>%
+        tally()
+      for(i in 1:nrow(nodesM))
+      {
+        if(nodesM$pais[i]=="Superficial" ||
+           nodesM$pais[i]=="Intermedio" ||
+           nodesM$pais[i]=="Profundo" )
+        {
+          nodesM$Group[i]<-"categoria"
+        }else
+        {
+          nodesM$Group[i]<-"pais"
+        }
+        
+      }
+      nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
+      edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
+      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+                                   layout = "layout_in_circle" )%>% visIgraphLayout() %>%
+        visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
+        visOptions(highlightNearest = TRUE,
+                   nodesIdSelection = TRUE)
+      # shinyjs::hide(id =  "img2")
+    }
+    else
+    {
+      # shinyjs::show(id = "img2")
+    }
+    
+    graficoSnaMenor
+  })  
+  output$snaProfundo <- renderVisNetwork({
+    snaProfundo<-NULL
+    data <-  tbl_clasificado_por_profundidad
+    if(input$regionSNA  != "All" )
+    {
+     
+      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Profundo" )
+      dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
+      dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
+      snaMenor <- graph.data.frame(dataSnaM, directed=T)
+      nrNodos<-as.data.frame(degree(snaMenor))
+      colnames(nrNodos)<-c("n")
+      edgesM<-as_data_frame(snaMenor, what="edges")
+      nodesM<-data.frame(V(snaMenor)$name)
+      colnames(nodesM) <- c("pais")
+      dfx<-edgesM %>%
+        group_by(from, to)%>%
+        tally()
+      Pfx<-dataSnaM %>%
+        group_by(pais,Group)%>%
+        tally()
+      for(i in 1:nrow(nodesM))
+      {
+        if(nodesM$pais[i]=="Superficial" ||
+           nodesM$pais[i]=="Intermedio" ||
+           nodesM$pais[i]=="Profundo" )
+        {
+          nodesM$Group[i]<-"categoria"
+        }else
+        {
+          nodesM$Group[i]<-"pais"
+        }
+        
+      }
+      nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
+      edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
+      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+                                   layout = "layout_in_circle" )%>% visIgraphLayout() %>%
+        visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
+        visOptions(highlightNearest = TRUE,
+                   nodesIdSelection = TRUE)
+      # shinyjs::hide(id =  "img2")
+    }
+    else
+    {
+      # shinyjs::show(id = "img2")
+    }
+    
+    graficoSnaMenor
+  })
+  
 }
 
 shinyApp(ui, server)
