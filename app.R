@@ -37,7 +37,7 @@ sidebar <- dashboardSidebar(sidebarMenu(
            menuSubItem("SNA(magnitud y produndidad)",tabName = "SNA"),
            menuSubItem("SNA(Relación entre paises)"),
            menuSubItem("SNA(Duración del evento)")),
-  menuItem("Data set", tabName = "Conjunto de datos", icon = icon("table")),
+  menuItem("Data set", tabName = "Dataset", icon = icon("table")),
   menuItem("Concepts", tabName = "Conceptos", icon = icon("question"))
   
 ))
@@ -73,32 +73,43 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                             valueBoxOutput("Cantidad_mes"),
                                             valueBoxOutput("Cantidad_dia")
                                           ),
-                                          h1("Tabla de datos telurica"),
-                                          fluidRow(column(4, selectInput("region",
-                                                                         "Regiones:",
-                                                                         c("All",
-                                                                           unique(as.character(tbl_clasificado_anio_actual$Group))))),
-                                                   column(4, selectInput("pais",
-                                                                         "Pais:",
-                                                                         c("All",
-                                                                           unique(as.character(tbl_clasificado_anio_actual$pais))))),
-                                                   column(4, selectInput("tipoM",
-                                                                         "Categoría:",
-                                                                         c("All",
-                                                                           unique(as.character(tbl_clasificado_anio_actual$tipoM)))))),
-                                          (DT::dataTableOutput("datos")),
+                                         
+                                          
                                           h1("Gráficos  comparativos"),hr(),
-                                          fluidRow(
-                                            box(
-                                              plotlyOutput("pastelAnioPasado"),
-                                            ),
-                                            box(
-                                              plotlyOutput("pastelAnioActual")
-                                            )
+                                          fluidRow(box(
+                                            column(6, selectInput("regionInicio",
+                                                                  "Regiones:",
+                                                                  c("All",
+                                                                    unique(as.character(tabla_base$Group))))),
+                                            column(6, selectInput("anioInicio",
+                                                                  "Años:",
+                                                                  c("All",
+                                                                    unique(as.character(tabla_base$Year))))))
+                                          ),fluidRow(
+                                            column(8,plotlyOutput("graficoBarras_mes")),
+                                            column(4,(DT::dataTableOutput("datos_grafico_barra")))
                                           )
-                         ), tabItem( 
+                                          
+                         )
+                         , tabItem( 
                            tabName = "Informacion",
                            
+                         ), tabItem( 
+                           tabName = "Dataset", 
+                           h1("Tabla de datos telurica"),
+                           fluidRow(column(4, selectInput("region",
+                                                          "Regiones:",
+                                                          c("All",
+                                                            unique(as.character(tbl_clasificado_anio_actual$Group))))),
+                                    column(4, selectInput("pais",
+                                                          "Pais:",
+                                                          c("All",
+                                                            unique(as.character(tbl_clasificado_anio_actual$pais))))),
+                                    column(4, selectInput("tipoM",
+                                                          "Categoría:",
+                                                          c("All",
+                                                            unique(as.character(tbl_clasificado_anio_actual$tipoM)))))),
+                                  (DT::dataTableOutput("datos"))
                                       ), 
                          tabItem(
                            tabName = "SNA",
@@ -181,42 +192,68 @@ mes <- as.numeric(format(Sys.Date(),'%m'))
 anio<- as.numeric(format(Sys.Date(),'%Y'))
 # CONJUNTO DE DATOS PARA EL INICIO***********************************************************************************************
 tabla_para_inicio <-tabla_base %>% filter(Year==anio)
+
 # DATOS PARA PARA LA GRAFICAS PASTEL-----------------------------------------------
-InformePastel_anio_actual<-tabla_para_inicio %>%                     
+tabla_para_informes <-tabla_base %>% filter(Year=="2021" & Group=="Sudamerica")
+Informe_barra_mes<-tabla_para_informes %>%                     
   group_by(Month) %>%     
   tally() 
+
+
+
+Informe_barra_mes$Month <- 
+  with(Informe_barra_mes,
+       ifelse(Informe_barra_mes$Month == 1 , "Enero",
+              ifelse(Informe_barra_mes$Month ==2 , "Febreto",
+                     ifelse(Informe_barra_mes$Month ==3, "Marzo",
+                            ifelse(Informe_barra_mes$Month ==4, "Abril",
+                                   ifelse(Informe_barra_mes$Month ==5 ,"Mayo",
+                                          ifelse(Informe_barra_mes$Month ==6,"Junio",
+                                                 ifelse(Informe_barra_mes$Month ==7,"Julio",
+                                                        ifelse(Informe_barra_mes$Month ==8,"Agosto",
+                                                               ifelse(Informe_barra_mes$Month ==9,"Septiembre",
+                                                                      ifelse(Informe_barra_mes$Month ==10,"Octubre",
+                                                                             ifelse(Informe_barra_mes$Month ==11,"Noviembre",
+                                                                                    ifelse(Informe_barra_mes$Month ==12,"Diciembre","Null")))))))))))))
+
+
+datos_grafico_barra<-ggplot(InformePastel_anio_actual,aes(x=Month,y=n,fill=n))+
+  geom_bar(stat="identity", position="dodge")+
+  labs(title = "Año actual", y="N terremoto", x="Paises", caption="Manos a la data")
+
+ ggplotly(datos_grafico_barra)
 
 # GRAFICAS PATEL***********************************************************************************************
 
 # Pastel uno--------------------------------------------------------------------------------------------
-pastelAnioActual <- plot_ly( labels=InformePastel_anio_actual$Month,values=InformePastel_anio_actual$n, 
-                             textinfo='label+percent',
-                             insidetextorientation='radial')
-pastelAnioActual <- pastelAnioActual %>% add_pie(hole = 0.6)
-pastelAnioActual <- pastelAnioActual %>% layout(title = ('Cantida de sismo del año Actual'),
-                                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+# pastelAnioActual <- plot_ly( labels=InformePastel_anio_actual$Month,values=InformePastel_anio_actual$n, 
+#                              textinfo='label+percent',
+#                              insidetextorientation='radial')
+# pastelAnioActual <- pastelAnioActual %>% add_pie(hole = 0.6)
+# pastelAnioActual <- pastelAnioActual %>% layout(title = ('Cantida de sismo del año Actual'),
+#                                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#                                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
 # CLASIFICACION DE DATOS -------------------------------------------------------------------------------------- 
 # AÑO ACTUA
-tbl_clasificado_anio_actual<-tabla_para_inicio %>% separate(8, c("region", "pais"), ", ", extra = "merge")
-tbl_clasificado_anio_actual<- na.omit(tbl_clasificado_anio_actual)
-tbl_clasificado_por_profundidad<-tbl_clasificado_anio_actual
-
-tbl_clasificado_anio_actual
-tbl_clasificado_anio_actual$tipoM <- 
-  with(tbl_clasificado_anio_actual,
-       ifelse(tbl_clasificado_anio_actual$Mag > 0 & tbl_clasificado_anio_actual$Mag <=3.9, "Menor",
-              ifelse(tbl_clasificado_anio_actual$Mag >=4 & tbl_clasificado_anio_actual$Mag <=4.9, "Ligero",
-                     ifelse(tbl_clasificado_anio_actual$Mag >=5 & tbl_clasificado_anio_actual$Mag <=5.9, "Moderado",
-                            ifelse(tbl_clasificado_anio_actual$Mag >=6 & tbl_clasificado_anio_actual$Mag <=6.9, "Fuerte",
-                                   ifelse(tbl_clasificado_anio_actual$Mag >=7 & tbl_clasificado_anio_actual$Mag <=7.9,"Mayor",
-                                          ifelse(tbl_clasificado_anio_actual$Mag >=8, "Gran",0)))))))
-
-tbl_clasificado_por_profundidad$tipoDepth.km <-
-  with(tbl_clasificado_por_profundidad,ifelse(tbl_clasificado_por_profundidad$`Depth km` >= 0 & tbl_clasificado_por_profundidad$`Depth km` <=70, "Superficial",
-                            ifelse(tbl_clasificado_por_profundidad$`Depth km` >=70 & tbl_clasificado_por_profundidad$`Depth km` <=300, "Intermedio",
-                            ifelse(tbl_clasificado_por_profundidad$`Depth km` >=301,"Profundo","Error"))))
+# tbl_clasificado_anio_actual<-tabla_para_inicio %>% separate(8, c("region", "pais"), ", ", extra = "merge")
+# tbl_clasificado_anio_actual<- na.omit(tbl_clasificado_anio_actual)
+# tbl_clasificado_por_profundidad<-tbl_clasificado_anio_actual
+# 
+# tbl_clasificado_anio_actual
+# tbl_clasificado_anio_actual$tipoM <- 
+#   with(tbl_clasificado_anio_actual,
+#        ifelse(tbl_clasificado_anio_actual$Mag > 0 & tbl_clasificado_anio_actual$Mag <=3.9, "Menor",
+#               ifelse(tbl_clasificado_anio_actual$Mag >=4 & tbl_clasificado_anio_actual$Mag <=4.9, "Ligero",
+#                      ifelse(tbl_clasificado_anio_actual$Mag >=5 & tbl_clasificado_anio_actual$Mag <=5.9, "Moderado",
+#                             ifelse(tbl_clasificado_anio_actual$Mag >=6 & tbl_clasificado_anio_actual$Mag <=6.9, "Fuerte",
+#                                    ifelse(tbl_clasificado_anio_actual$Mag >=7 & tbl_clasificado_anio_actual$Mag <=7.9,"Mayor",
+#                                           ifelse(tbl_clasificado_anio_actual$Mag >=8, "Gran",0)))))))
+# 
+# tbl_clasificado_por_profundidad$tipoDepth.km <-
+#   with(tbl_clasificado_por_profundidad,ifelse(tbl_clasificado_por_profundidad$`Depth km` >= 0 & tbl_clasificado_por_profundidad$`Depth km` <=70, "Superficial",
+#                             ifelse(tbl_clasificado_por_profundidad$`Depth km` >=70 & tbl_clasificado_por_profundidad$`Depth km` <=300, "Intermedio",
+#                             ifelse(tbl_clasificado_por_profundidad$`Depth km` >=301,"Profundo","Error"))))
 
 # GRAFICO PASTEL DE LA CATEGORIA-----------------------------------------------------------------------------
 #REDES SOCIAL NETWORCK ANALITY********************************************************************************
@@ -325,6 +362,27 @@ server <- function(input, output) {
     }
     data
   }
+  )
+  
+  
+  output$datos_grafico_barra<-DT::renderDataTable({
+     data<-tabla_base
+     if(input$anioInicio  != "All" )
+     {
+       data <- data[data$Year == input$anioInicio,]
+     }
+     if( input$regionInicio  != "All" )
+     {
+       data <- data[data$Group ==  input$regionInicio,]
+     }
+     Informe_barra_mes<-data %>%                     
+       group_by(Month) %>%     
+       tally() 
+     Informe_barra_mes
+  }
+  )
+  output$graficoBarras_mes <- renderPlotly(
+    datos_grafico_barra
   )
   
   # output$graficoUno<- renderVisNetwork({graficoUno}
