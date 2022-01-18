@@ -108,7 +108,18 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                          column(3,(tableOutput("datos_grafico_regiones" )))))
                          )
                          , tabItem( 
-                           tabName = "Informacion",
+                           tabName = "Informacion", 
+                           fluidRow(
+                             h4("¿Cuál es nuestro objetivo?"),
+                             p("Tenemos por objetivo procesar los datos de eventos telúricos y presentar información mediante gráficos. Principalmente nuestro objetivo es identificar las zonas con mayor frecuencia de movimientos telúricos por medio del análisis de redes sociales (Social Network Analysis, SNA). Para el efecto, se utilizó el software RStudio y se organizó en tres fases: (1) utilizar web scraping para extraer en tiempo real los registros de movimientos telúricos de las Instituciones de Investigación Incorporadas para la Sismología o IRIS, (2) realizar la exploración y preprocesamiento del conjunto de datos, (3) construir las redes aplicando Social Network Analysis, (4) finalmente, crear este sitio web con shiny para presentar los resultados."),
+                             h4("¿Qué es Social Network Analysis?"),
+                             p("La característica que define el análisis de redes sociales (Social Network Analysis, SNA) es su enfoque en la estructura de las relaciones. El análisis se representa en una red que está formada por un conjunto finito de vértices y las relaciones, definidos en ellos."),
+                             h4("¿Cuáles son las fuentes de datos?"),
+                             p("Los datos de eventos de movimientos telúricos son extraídos en tiempo real de la página oficial de las Instituciones de Investigación Incorporadas para la Sismología o IRIS. IRIS es un consorcio de investigación a nivel de universidades que se dedica a investigar la Tierra y explorar su interior a través de la colección y la distribución de datos sismológicos."),
+                             h4("¿Cuándo se actualizará los gráficos?"),
+                             p("Los gráficos informativos y de redes se actualizan de forma automática cada vez que recargue esta página."),
+                            
+                           )
                            
                          ), tabItem( 
                            tabName = "Dataset", 
@@ -157,22 +168,34 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          ), tabItem(
                                 tabName = "GENERAL_MAGNITUD",
                                 box(
-                                  title = "Inputs",
+                                  title = "SNA DE NAGNITUD",collapsible = TRUE,
                                   status = "warning",
                                   width = "100%", 
-                                  "Descripción del contenido y utilidad del grafo"
+                                  "El gráfico de redes representa interconexiones entre los países con el tipo de magnitud. La presencia o ausencia de cada interconexión indica si hubo al menos un evento de ese tipo de magnitud en el país.",
+                                  tags$div(tags$ul(
+                                    tags$li(tags$span("Los nodos hacen referencia a los países y los tipos de magnitud")),
+                                    tags$li(tags$span("Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de magnitud con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
+                                  )),
+                                  p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado.")
+                                  
                                 ),
-                                visNetworkOutput("graficoUno")
+                                box(title = "SNA",status = "warning",width = "100%",visNetworkOutput("graficoUno"))
                               )
                          , tabItem(
                            tabName = "GENERAL_PROFUNDIDAD",
                            box(
-                             title = "Inputs",
+                             title = "SNA DE PROFUNDIDAD",collapsible = TRUE,
                              status = "warning",
                              width = "100%", 
-                             "Descripción del contenido y utilidad del grafo"
+                             "El gráfico de redes representa interconexiones entre los países con el tipo de profundidad. La presencia o ausencia de cada interconexión indica si hubo al menos un evento de ese tipo de profundidad en el país.",
+                             tags$div(tags$ul(
+                               tags$li(tags$span("Los nodos hacen referencia a los países y los tipos de profundidad. Los tipos de profundidad son de tipo superficial cuando un evento tuvo profundidad menor a 70 km, intermedio cuando la profundidad fue entre 71 - 300 km y profundo representa una profundidad mayor a 300 km.")),
+                               tags$li(tags$span("•	Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de profundidad con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
+                             )),
+                             p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado.")
                            ),
-                           visNetworkOutput("graficoDos")
+                           box(title = "SNA",status = "warning",width = "100%", visNetworkOutput("graficoDos"))
+                          
                          )
                          )
 )
@@ -305,7 +328,6 @@ graficoUno<- visNetwork(nodes1,edges1,
   visOptions(selectedBy = "group",
              highlightNearest = TRUE,
              nodesIdSelection = TRUE)%>%
-  visLegend(main = "Categoria de nodo", position = "right")%>%
   visInteraction(navigationButtons = TRUE)
 
 
@@ -363,7 +385,6 @@ graficoDos<- visNetwork(nodes1,edges1,
   visOptions(selectedBy = "group",
              highlightNearest = TRUE,
              nodesIdSelection = TRUE)%>%
-  visLegend(main = "Categoria de nodo", position = "right")%>%
   visInteraction(navigationButtons = TRUE)
 
 # ------------------Servidor-----------------
