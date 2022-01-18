@@ -25,6 +25,7 @@ library(visNetwork)
 library(igraph)
 library(threejs)
 library(shinyjs)
+library(leaflet)
 
 header <- dashboardHeader(title = "Terrae")
 
@@ -32,6 +33,7 @@ header <- dashboardHeader(title = "Terrae")
 sidebar <- dashboardSidebar(sidebarMenu(
   menuItem("Dashboard", tabName = "Inicio", icon = icon("th")),
   menuItem("Conjunto de datos", tabName = "Dataset", icon = icon("table")),
+  menuItem("Mapa", tabName = "Mapa", icon = icon("table")),
   menuItem("Social network analysis", icon = icon("bar-chart-o"),
            menuSubItem("SNA de magnitud", tabName = "GENERAL_MAGNITUD"  ),
            menuSubItem("SNA de profundidad", tabName = "GENERAL_PROFUNDIDAD"  ),
@@ -121,7 +123,12 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                             
                            )
                            
-                         ), tabItem( 
+                         ),
+                         tabItem( 
+                           tabName = "Mapa"
+                           # leafletOutput("mymap", height = 10000)
+                         ),
+                         tabItem( 
                            tabName = "Dataset", 
                            h1("Tabla de datos telurica"),
                            fluidRow(column(4, selectInput("region",
@@ -374,7 +381,6 @@ for(i in 1:nrow(nodes))
 }
 
 
-
 nodes1 <- data.frame(id =nodes$pais,group=nodes$Group , value=xy$n, label=nodes$pais )
 edges1 <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
 
@@ -392,6 +398,21 @@ graficoDos<- visNetwork(nodes1,edges1,
 ui <- dashboardPage(header,sidebar,body)
 server <- function(input, output) {
   
+  
+  # output$map <- renderLeaflet(
+  #   
+  #   leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
+  #     clusterOptions = markerClusterOptions()
+  #   )
+  #   
+  #   
+  # )
+  # 
+  # output$mymap <- renderLeaflet({
+  #     leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
+  #       clusterOptions = markerClusterOptions()
+  #     )
+  # })
   #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
   output$Cantidad_anio <- renderValueBox({
     CANTIDAD_ANIOS<- nrow(tabla_para_inicio %>% filter(Year==anio))
