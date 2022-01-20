@@ -37,8 +37,7 @@ sidebar <- dashboardSidebar(sidebarMenu(
   menuItem("Social network analysis", icon = icon("bar-chart-o"),
            menuSubItem("SNA de magnitud", tabName = "GENERAL_MAGNITUD"  ),
            menuSubItem("SNA de profundidad", tabName = "GENERAL_PROFUNDIDAD"  ),
-           menuSubItem("SNA(magnitud y produndidad)",tabName = "SNA"),
-           menuSubItem("SNA(Duración del evento)")),
+           menuSubItem("SNA(magnitud y produndidad)",tabName = "SNA")),
   menuItem("Preguntas frecuentes", tabName = "Informacion", icon = icon("dashboard")),
   menuItem("Conceptos", tabName = "Conceptos", icon = icon("question")),
   menuItem("Código", tabName = "Conceptos", icon = icon("question"))
@@ -70,7 +69,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          
                          tabItems(
                            tabItem(tabName = "Inicio",
-                                          h1("Cantidad de sismos  Fecha: ", Sys.Date()),
+                                          h1("Cantidad de sismos"),
                                           fluidRow(
                                             valueBoxOutput("Cantidad_anio"),
                                             valueBoxOutput("Cantidad_mes"),
@@ -78,7 +77,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                           ),
                                          
                                           
-                                          h1("Gráficos  comparativos"),hr(),
+                                          h1("Gráficos"),hr(),
                                           fluidRow(box(
                                             column(6, selectInput("regionInicio",
                                                                   "Regiones:",
@@ -105,7 +104,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                                                                 c("All",
                                                                                                   unique(as.character(tabla_base$Year))))
                                                     ),
-                                           fluidRow( box(width = "100%", title = "Gráfico según la magnitud", status = "warning", collapsible = TRUE,solidHeader = TRUE,
+                                           fluidRow( box(width = "100%", title = "Gráfico según la región", status = "warning", collapsible = TRUE,solidHeader = TRUE,
                                                          column(9,plotlyOutput("graficoRegiones")),
                                                          column(3,(tableOutput("datos_grafico_regiones" )))))
                          )
@@ -125,8 +124,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                            
                          ),
                          tabItem( 
-                           tabName = "Mapa"
-                           # leafletOutput("mymap", height = 10000)
+                           tabName = "Mapa", 
+                           leafletOutput("mymap", height = 1000)
                          ),
                          tabItem( 
                            tabName = "Dataset", 
@@ -209,11 +208,11 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
 
 # WEB SCRAPING ------------------------------------------------------------------------------------------------------
 library(rvest)
+
 dt_sudamerica<- read_html("http://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=-0.014&minlat=-39.910&maxlon=-57.656&minlon=-89.283&sbl=1&pbl=1&caller=self&name=Western%20South%20America&zm=4&mt=ter&rgn=Western%20South%20America&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_centroamerica<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=28.770&minlat=4.920&maxlon=-53.440&minlon=-118.480&sbl=1&pbl=1&caller=self&name=Central%20America&zm=4&mt=ter&rgn=Central%20America&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_sudesteasiatico<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=37.720&minlat=9.800&maxlon=107.580&minlon=64.510&sbl=1&pbl=1&caller=self&name=S.E.%20Asia%20Region&zm=4&mt=ter&rgn=S.E.%20Asia%20Region&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
 dt_mediterraneo_oriental<- read_html("https://ds.iris.edu/ieb/evtable.phtml?caller=IEB&orderby=time-desc&src=usgs&limit=5000&maxlat=48.220&minlat=31.580&maxlon=45.880&minlon=7.560&sbl=1&pbl=1&caller=self&name=E.%20Mediterranean&zm=5&mt=ter&rgn=E.%20Mediterranean&title=IEB%20export%3A%205000%20earthquakes%20as%20a%20sortable%20table.&stitle=from%20the%20earliest%20to%20the%20latest%20available%2C%20all%20mags%2C%20all%20depths%2C%20with%20priority%20for%20most%20recent%2C%20limited%20to%205000%2C%20%20showing%20data%20from%20USGS%2C%20")
-
 
 #------------------------------------------------------EXTRAER TABLAS ----------------------------------------------------------
 
@@ -407,12 +406,12 @@ server <- function(input, output) {
   #   
   #   
   # )
-  # 
-  # output$mymap <- renderLeaflet({
-  #     leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
-  #       clusterOptions = markerClusterOptions()
-  #     )
-  # })
+  
+  output$mymap <- renderLeaflet({
+      leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
+        clusterOptions = markerClusterOptions()
+      )
+  })
   #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
   output$Cantidad_anio <- renderValueBox({
     CANTIDAD_ANIOS<- nrow(tabla_para_inicio %>% filter(Year==anio))
@@ -487,7 +486,7 @@ server <- function(input, output) {
     
     xvz<-ggplot(Informe_barra_mes,aes(x=Group,y=n,fill=n))+
       geom_bar(stat="identity", position="dodge")+
-      labs(title = "Año actual", y="N terremoto", x="Meses", caption="Manos a la data")
+      labs(title = "", y="N terremoto", x="Regiones", caption="Manos a la data")
     
     xvz
     
@@ -541,7 +540,7 @@ server <- function(input, output) {
     
     xv<-ggplot(Informe_barra_mes,aes(x=Month,y=n,fill=n))+
       geom_bar(stat="identity", position="dodge")+
-      labs(title = "Año actual", y="N terremoto", x="Meses", caption="Manos a la data")
+      labs(title = "", y="N terremoto", x="Meses", caption="Manos a la data")
     
      xv
     
