@@ -69,7 +69,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          
                          tabItems(
                            tabItem(tabName = "Inicio",
-                                          h1("Cantidad de sismos"),
+                                          h1("Cantidad de movimientos telúricos en el 2022"),
                                           fluidRow(
                                             valueBoxOutput("Cantidad_anio"),
                                             valueBoxOutput("Cantidad_mes"),
@@ -77,7 +77,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                           ),
                                          
                                           
-                                          h1("Gráficos"),hr(),
+                                          h1("Reportes gráficos de movimientos telúricos"),hr(),
                                           fluidRow(box(
                                             column(6, selectInput("regionInicio",
                                                                   "Regiones:",
@@ -87,24 +87,24 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                                   "Años:",
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Year))))))
-                                          ),fluidRow(  box(width = "100%", title = "Gráfico según la magnitud", status = "warning", collapsible = TRUE,solidHeader = TRUE,
+                                          ),fluidRow(  box(width = "100%", title = "Cantidad de movimientos telúricos por mes", status = "warning", collapsible = TRUE,solidHeader = TRUE,
                                             column(9,plotlyOutput("graficoBarras_mes")),
                                             column(3,(tableOutput("datos_grafico_barra" ))))
                                           )
                                           ,fluidRow( 
-                                            box(title ="Gráfico según la magnitud", status = "warning", collapsible = TRUE,solidHeader = TRUE
+                                            box(title ="Reporte según el tipo de magnitud", status = "warning", collapsible = TRUE,solidHeader = TRUE
                                                      ,plotlyOutput("grafico_pastel_magnitud"),
                                                      tableOutput("tabla_magnitud")),
-                                            box(title = "Gráfico según la profundidad ", status = "warning", collapsible = TRUE,solidHeader = TRUE
+                                            box(title = "Reporte según el tipo de profundidad", status = "warning", collapsible = TRUE,solidHeader = TRUE
                                                    ,plotlyOutput("grafico_pastel_profundida"),
                                                     tableOutput("tabla_profundida"))
                                                 ),
-                                          fluidRow( h3("Por cada región"),selectInput("anioRegion",
-                                                                                                "Años:",
+                                          fluidRow( h3("Reporte de cantidad de eventos por año"),selectInput("anioRegion",
+                                                                                                "Seleccione el año:",
                                                                                                 c("All",
                                                                                                   unique(as.character(tabla_base$Year))))
                                                     ),
-                                           fluidRow( box(width = "100%", title = "Gráfico según la región", status = "warning", collapsible = TRUE,solidHeader = TRUE,
+                                           fluidRow( box(width = "100%", title = "Cantidad de eventos en cada región", status = "warning", collapsible = TRUE,solidHeader = TRUE,
                                                          column(9,plotlyOutput("graficoRegiones")),
                                                          column(3,(tableOutput("datos_grafico_regiones" )))))
                          )
@@ -129,27 +129,27 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          ),
                          tabItem( 
                            tabName = "Dataset", 
-                           h1("Tabla de datos telurica"),
+                           h1("Tabla de datos de los movimientos telúricos"),
                            fluidRow(column(4, selectInput("region",
-                                                          "Regiones:",
+                                                          "Seleccione la región:",
                                                           c("All",
                                                             unique(as.character(tbl_clasificado_anio_actual$Group))))),
                                     column(4, selectInput("pais",
-                                                          "Pais:",
+                                                          "Seleccione el país:",
                                                           c("All",
                                                             unique(as.character(tbl_clasificado_anio_actual$pais))))),
                                     column(4, selectInput("tipoM",
-                                                          "Categoría:",
+                                                          "Seleccione el tipo de magnitud:",
                                                           c("All",
                                                             unique(as.character(tbl_clasificado_anio_actual$tipoM)))))),
                                   (DT::dataTableOutput("datos"))
                                       ), 
                          tabItem(
                            tabName = "SNA",
-                           h3("Redes según la categoría de la magnitud"),
+                           h3("Redes según el tipo de magnitud"),
                            hr(""),
                            fluidRow(column(4, selectInput("regionSNA",
-                                                          "Regiones:",
+                                                          "Seleccione la región:",
                                                           c("All",
                                                             unique(as.character(tbl_clasificado_anio_actual$Group))))),
                            )
@@ -162,7 +162,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                              column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Mayor entre 7.0-7.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMayor"))),
                              column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Grandes mayor de 8.0", status = "warning", solidHeader = TRUE, visNetworkOutput("snaGran")))
                            ),
-                           h3("Redes según la profundida"),
+                           h3("Redes según el tipo de profundidad"),
                            hr(),
                            fluidRow(
                              column(4,box( width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Superficial hasta 70 km", status = "primary", solidHeader = TRUE, visNetworkOutput("snaSuperficial"))),
@@ -174,7 +174,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          ), tabItem(
                                 tabName = "GENERAL_MAGNITUD",
                                 box(
-                                  title = "SNA DE NAGNITUD",collapsible = TRUE,
+                                  title = "SNA QUE REPRESENTA LA RELACIÓN DE MOVIMIENTOS TELÚRICOS EN CADA PAÍS CON EL TIPO DE MAGNITUD ",collapsible = TRUE,
                                   status = "warning",
                                   width = "100%", 
                                   "El gráfico de redes representa interconexiones entre los países con el tipo de magnitud. La presencia o ausencia de cada interconexión indica si hubo al menos un evento de ese tipo de magnitud en el país.",
@@ -190,13 +190,13 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          , tabItem(
                            tabName = "GENERAL_PROFUNDIDAD",
                            box(
-                             title = "SNA DE PROFUNDIDAD",collapsible = TRUE,
+                             title = "SNA QUE REPRESENTA LA RELACIÓN DE MOVIMIENTOS TELÚRICOS EN CADA PAÍS CON EL TIPO DE PROFUNDIDAD",collapsible = TRUE,
                              status = "warning",
                              width = "100%", 
                              "El gráfico de redes representa interconexiones entre los países con el tipo de profundidad. La presencia o ausencia de cada interconexión indica si hubo al menos un evento de ese tipo de profundidad en el país.",
                              tags$div(tags$ul(
-                               tags$li(tags$span("Los nodos hacen referencia a los países y los tipos de profundidad. Los tipos de profundidad son de tipo superficial cuando un evento tuvo profundidad menor a 70 km, intermedio cuando la profundidad fue entre 71 - 300 km y profundo representa una profundidad mayor a 300 km.")),
-                               tags$li(tags$span("•	Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de profundidad con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
+                               tags$li(tags$span("Los nodos hacen referencia a los países y los tipos de profundidad. Los movimientos telúricos son de tipo SUPERFICIAL cuando un evento tuvo profundidad menor a 70 km, INTERMEDIO cuando la profundidad fue entre 71 - 300 km y PROFUNDO representa una profundidad mayor a 300 km.")),
+                               tags$li(tags$span("Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de profundidad con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
                              )),
                              p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado.")
                            ),
@@ -567,7 +567,7 @@ server <- function(input, output) {
                                textinfo='label+percent',
                                insidetextorientation='radial')
     pastelMagnitud <- pastelMagnitud %>% add_pie(hole = 0.6)
-    pastelMagnitud <- pastelMagnitud %>% layout(title = ('Cantida de sismo del año Actual'),
+    pastelMagnitud <- pastelMagnitud %>% layout(title = ('Gráfico con la cantidad de eventos'),
                                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     
@@ -596,7 +596,7 @@ server <- function(input, output) {
                                   textinfo='label+percent',
                                   insidetextorientation='radial')
     pastelProfundidad <- pastelProfundidad %>% add_pie(hole = 0.6)
-    pastelProfundidad <- pastelProfundidad %>% layout(title = ('Cantida de sismo del año Actual'),
+    pastelProfundidad <- pastelProfundidad %>% layout(title = ('Gráfico con la cantidad de eventos'),
                                                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                                       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     
