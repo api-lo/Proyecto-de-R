@@ -408,8 +408,25 @@ server <- function(input, output) {
   # )
   
   output$mymap <- renderLeaflet({
-      leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
-        clusterOptions = markerClusterOptions()
+      # leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
+      #   clusterOptions = markerClusterOptions(), label = tabla_para_inicio$Mag
+      # )
+    leaflet(tbl_todo_los_datos_magnitud) %>% addTiles() %>%
+      addCircleMarkers(
+        clusterOptions = markerClusterOptions,
+        radius = ifelse(tbl_todo_los_datos_magnitud$tipoM == "Menor", 4,
+                        ifelse(tbl_todo_los_datos_magnitud$tipoM == "Ligero", 6,
+                               ifelse(tbl_todo_los_datos_magnitud$tipoM == "Moderado", 8,
+                                      ifelse(tbl_todo_los_datos_magnitud$tipoM == "Fuerte", 10,
+                                             ifelse(tbl_todo_los_datos_magnitud$tipoM == "Mayor", 12,14))))),
+        color = ifelse(tbl_todo_los_datos_magnitud$tipoM == "Menor", "#2ce622",
+                       ifelse(tbl_todo_los_datos_magnitud$tipoM == "Ligero", "#ded416",
+                              ifelse(tbl_todo_los_datos_magnitud$tipoM == "Moderado", "#1878c7",
+                                     ifelse(tbl_todo_los_datos_magnitud$tipoM == "Fuerte", "#a216de",
+                                            ifelse(tbl_todo_los_datos_magnitud$tipoM == "Mayor", "#e00909","#000000"))))),
+        label = tbl_todo_los_datos_magnitud$Mag, labelOptions = tbl_todo_los_datos_magnitud$pais ,
+        popup = tbl_todo_los_datos_magnitud$tipoM,
+        stroke = FALSE, fillOpacity = 1
       )
   })
   #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
