@@ -447,7 +447,11 @@ server <- function(input, output) {
       # Layers control
       addLayersControl(
         baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
-        options = layersControlOptions(collapsed = FALSE))
+        options = layersControlOptions(collapsed = FALSE)) %>%
+      addLegend(colors =c("#2ce622", "#ded416","#1878c7","#a216de","#e00909","#000000"),
+                   labels = c("Menor", "Ligero", "Moderado","Fuerte", "Mayor", "Gran"),
+                   opacity = 0.5)
+    
   })
   #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
   output$Cantidad_anio <- renderValueBox({
