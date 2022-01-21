@@ -80,11 +80,11 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                           h1("Reportes gráficos de movimientos telúricos"),hr(),
                                           fluidRow(box(
                                             column(6, selectInput("regionInicio",
-                                                                  "Regiones:",
+                                                                  "Seleccione la región:",
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Group))))),
                                             column(6, selectInput("anioInicio",
-                                                                  "Años:",
+                                                                  "Seleccione el año:",
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Year))))))
                                           ),fluidRow(  box(width = "100%", title = "Cantidad de movimientos telúricos por mes", status = "warning", collapsible = TRUE,solidHeader = TRUE,
@@ -412,6 +412,10 @@ server <- function(input, output) {
       #   clusterOptions = markerClusterOptions(), label = tabla_para_inicio$Mag
       # )
     leaflet(tbl_todo_los_datos_magnitud) %>% addTiles() %>%
+      # estilos mapa
+      addTiles(group = "OSM (default)") %>%
+      addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
+      addProviderTiles(providers$Stamen.TonerLite, group = "Toner Lite") %>%
       addCircleMarkers(
         clusterOptions = markerClusterOptions,
         radius = ifelse(tbl_todo_los_datos_magnitud$tipoM == "Menor", 4,
@@ -424,10 +428,26 @@ server <- function(input, output) {
                               ifelse(tbl_todo_los_datos_magnitud$tipoM == "Moderado", "#1878c7",
                                      ifelse(tbl_todo_los_datos_magnitud$tipoM == "Fuerte", "#a216de",
                                             ifelse(tbl_todo_los_datos_magnitud$tipoM == "Mayor", "#e00909","#000000"))))),
-        label = tbl_todo_los_datos_magnitud$Mag, labelOptions = tbl_todo_los_datos_magnitud$pais ,
-        popup = tbl_todo_los_datos_magnitud$tipoM,
-        stroke = FALSE, fillOpacity = 1
-      )
+        label = tbl_todo_los_datos_magnitud$Mag ,
+        popup = paste0(
+          "<b>Magnitud: </b>"
+          , tbl_todo_los_datos_magnitud$Mag
+          , "<br>"
+          , "<b>Tipo Mag: </b>"
+          , tbl_todo_los_datos_magnitud$tipoM
+          , "<br>"
+          , "<b>País: </b>"
+          , tbl_todo_los_datos_magnitud$pais
+          , "<br>"
+          , "<b>Región: </b>"
+          , tbl_todo_los_datos_magnitud$region
+          
+        ),
+        stroke = FALSE, fillOpacity = 1) %>%
+      # Layers control
+      addLayersControl(
+        baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
+        options = layersControlOptions(collapsed = FALSE))
   })
   #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
   output$Cantidad_anio <- renderValueBox({
