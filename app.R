@@ -78,7 +78,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                          
                                           
                                           h1("Reportes gráficos de movimientos telúricos"),hr(),
-                                          fluidRow(box(
+                                          fluidRow(
                                             column(6, selectInput("regionInicio",
                                                                   "Seleccione la región:",
                                                                   c("All",
@@ -86,7 +86,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                             column(6, selectInput("anioInicio",
                                                                   "Seleccione el año:",
                                                                   c("All",
-                                                                    unique(as.character(tabla_base$Year))))))
+                                                                    unique(as.character(tabla_base$Year)))))
                                           ),fluidRow(  box(width = "100%", title = "Cantidad de movimientos telúricos por mes", status = "warning", collapsible = TRUE,solidHeader = TRUE,
                                             column(9,plotlyOutput("graficoBarras_mes")),
                                             column(3,(tableOutput("datos_grafico_barra" ))))
@@ -252,7 +252,15 @@ tabla_para_inicio <-tabla_base
 
 # CLASIFICACION DE DATOS -------------------------------------------------------------------------------------- 
 # AÑO ACTUA
-tbl_clasificado_anio_actual<-tabla_para_inicio %>% separate(8, c("region", "pais"), ", ", extra = "merge")
+for(i in 1:nrow(tabla_base))
+{
+  vector<-str_split(tabla_base$Region[i], ",", simplify = TRUE)
+  vector<-as.data.frame(vector)
+  tabla_base$pais[i]<-  vector[,ncol(vector)]
+}
+
+
+tbl_clasificado_anio_actual<-tabla_base [ , c(1,2,3,4,5,6,7,8,10,9)]
 tbl_clasificado_anio_actual<- na.omit(tbl_clasificado_anio_actual)
 tbl_clasificado_por_profundidad<-tbl_clasificado_anio_actual
 
@@ -440,7 +448,7 @@ server <- function(input, output) {
           , tbl_todo_los_datos_magnitud$pais
           , "<br>"
           , "<b>Región: </b>"
-          , tbl_todo_los_datos_magnitud$region
+          , tbl_todo_los_datos_magnitud$Region
           
         ),
         stroke = FALSE, fillOpacity = 1) %>%
