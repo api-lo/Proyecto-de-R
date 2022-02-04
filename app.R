@@ -27,12 +27,11 @@ library(threejs)
 library(shinyjs)
 library(leaflet)
 
-header <- dashboardHeader(title = "Terrae")
+header <- dashboardHeader(title = "Pacha-Kuyuy" )
 
 
 sidebar <- dashboardSidebar(collapsed =FALSE ,sidebarMenu(
   menuItem("Dashboard", tabName = "Inicio", icon = icon("th")),
-  # menuItem("Conjunto de datos", tabName = "Dataset", icon = icon("table")),
   menuItem("Mapa", tabName = "Mapa", icon = icon("globe")),
   menuItem("Social network analysis", icon = icon("neuter"),
            menuSubItem("SNA de magnitud", icon=icon("caret-right"), tabName = "GENERAL_MAGNITUD"  ),
@@ -166,7 +165,17 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                           font-style: normal !important;
                                                           background: rgb(84,96,101)!important;
                                                           background: linear-gradient(262deg, rgba(84,96,101,1) 0%, rgba(148,152,154,1) 100%)!important;
-                                                      }
+                                                       }
+                                                        .skin-blue .main-header .navbar {
+                                                        background: rgb(224,94,38); !important;
+                                                     
+                                                
+                                                        }
+                                                          .skin-blue .main-header .logo 
+                                                        {
+                                                      background: rgb(224,94,38); !important;
+                                                      background: linear-gradient(262deg,rgba(224,94,38,1) 100%,  rgba(231,183,87,1) 0%) !important;
+                                                          }  
 
                         '))),
                          tags$style(HTML('.navbar-custom-menu>.navbar-nav>li:last-child>.dropdown-menu { width:10px; font-size:10px; padding:1px; margin:1px;}')),
@@ -1272,7 +1281,6 @@ server <- function(input, output) {
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
-      graficoSnaMenor
 
     }
     
