@@ -30,81 +30,188 @@ library(leaflet)
 header <- dashboardHeader(title = "Terrae")
 
 
-sidebar <- dashboardSidebar(sidebarMenu(
+sidebar <- dashboardSidebar(collapsed =FALSE ,sidebarMenu(
   menuItem("Dashboard", tabName = "Inicio", icon = icon("th")),
-  menuItem("Conjunto de datos", tabName = "Dataset", icon = icon("table")),
-  menuItem("Mapa", tabName = "Mapa", icon = icon("table")),
-  menuItem("Social network analysis", icon = icon("bar-chart-o"),
-           menuSubItem("SNA de magnitud", tabName = "GENERAL_MAGNITUD"  ),
-           menuSubItem("SNA de profundidad", tabName = "GENERAL_PROFUNDIDAD"  ),
-           menuSubItem("SNA(magnitud y produndidad)",tabName = "SNA")),
-  menuItem("Preguntas frecuentes", tabName = "Informacion", icon = icon("dashboard")),
-  menuItem("Conceptos", tabName = "Conceptos", icon = icon("question")),
-  menuItem("Código", tabName = "Conceptos", icon = icon("question"))
+  # menuItem("Conjunto de datos", tabName = "Dataset", icon = icon("table")),
+  menuItem("Mapa", tabName = "Mapa", icon = icon("globe")),
+  menuItem("Social network analysis", icon = icon("neuter"),
+           menuSubItem("SNA de magnitud", icon=icon("caret-right"), tabName = "GENERAL_MAGNITUD"  ),
+           menuSubItem("SNA de profundidad",icon=icon("caret-right"), tabName = "GENERAL_PROFUNDIDAD"  ),
+           menuSubItem("SNA detalle magnitud", icon=icon("caret-right"), tabName = "SNAM"),
+           menuSubItem("SNA detalle produndidad", icon=icon("caret-right"), tabName = "SNAP")  ),
+  menuItem("Preguntas frecuentes", tabName = "Informacion", icon = icon("question")),
+  menuItem("Conceptos", tabName = "Conceptos", icon = icon("align-justify")),
+  menuItem("Código", tabName = "Conceptos", icon = icon("file-code-o"))
   
 ))
 
 body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo de Terremotos'"),
-                         tags$style(HTML(".fa-dashboard { font-size: 15px; }")),
-                         tags$style(HTML(".fa-globe { font-size: 20px; }")),
-                         tags$style(HTML(".fa-barcode { font-size: 20px; }")),
-                         tags$style(HTML(".tab-content { padding-left: 20px; padding-right: 30px; }")) ,
-                         tags$style(HTML(".fa-wrench { font-size: 15px; }")),
-                         tags$style(HTML(".fa-refresh { font-size: 15px; }")),
-                         tags$style(HTML(".fa-search { font-size: 15px; }")),
-                         tags$style(HTML(".fa-comment { font-size: 20px; }")),
-                         tags$style(HTML(".fa-share-alt { font-size: 20px; }")),
-                         tags$style(HTML(".fa-envelope { font-size: 20px; }")),
-                         tags$style(HTML(".fa-question-circle { font-size: 20px; }")),
-                         tags$style(HTML(".fa-chevron-circle-down { font-size: 15px; }")),
-                         tags$style(HTML(".fa-bell { font-size: 17px; }")),
-                         tags$style(HTML(".fa-check { font-size: 14px; }")),
-                         tags$style(HTML(".fa-times { font-size: 14px; }")),
-                         tags$style( HTML("hr {border-top: 1px solid #000000;}") ),
-                         tags$style( HTML(".shiny-output-error { visibility: hidden; }") ),
-                         tags$style( HTML(".shiny-output-error:before { visibility: hidden; }") ),
+                      
+                      tags$head(tags$style(HTML('
+                                       body
+                                            {
+                                                background: #cfcfcf;
+                                            }
+                                            .inner
+                                            {
+                                                display: flex;
+                                                flex-direction: column-reverse;
+                                            }
+                                            .inner h3{
+                                                font-size: 30px;
+                                                font-weight: bold;
+                                               
+                                            }
+                                            .inner p{
+                                                font-size: 15px;
+                                               
+                                            }
+                                           .titulo{
+                                             font-weight: bold; 
+                                             margin-bottom: 10px;
+                                            }
+
+                                              th
+                                              {
+                                                color: #5679F0;
+                                              }
+                                              .box-header
+                                                {
+                                                    background: rgb(76,113,240) !important;
+                                                    color: #fff;
+                                                    border-top-left-radius:10px;
+                                                    border-top-right-radius:10px;
+                                                    
+                                                }
+                                                .box{
+                                                border-radius: 10px;
+                                                border-top: 0px solid #d2d6de;
+                                                }
+                                                
+                                                .bg-orange
+                                                {
+                                                background: #fff;
+                                                padding: 10PX;
+                                                border-radius: 15px;
+                                                background: rgb(76,113,240) !important;
+                                                background: linear-gradient(90deg, rgba(76,113,240,1) 0%,  rgba(116,144,241,7) 100%) !important;
+                                                
+                                                }
+                                                .bg-green
+                                                {
+                                                
+                                                background: #fff;
+                                                padding: 10PX;
+                                                border-radius: 15px;
+                                                background: rgb(84,96,101)!important;
+                                                background: linear-gradient(262deg, rgba(84,96,101,1) 0%, rgba(148,152,154,1) 100%)!important;
+                                                }
+                                                .bg-olive{
+                                                  
+                                                 
+                                                background: #fff;
+                                                padding: 10PX;
+                                                border-radius: 15px;
+                                                height:100%;
+                                                background: rgb(23,191,65) !important;
+                                                background: linear-gradient(90deg,  rgba(31,170,31,1)  0%, rgba(23,191,65,1) 100%)!important;
+                                                
+                                              
+                                                }
+                                                .bg-yellow{
+                                                
+                                                background: #fff;
+                                                padding: 10PX;
+                                                border-radius: 15px;
+                                                height:100%;
+                                                background: rgb(224,94,38); !important;
+                                                background: linear-gradient(262deg, rgba(224,94,38,1) 0%, rgba(231,183,87,1) 100%) !important;
+                                                
+                                                }
+                                                .tab-content { padding-left: 20px; padding-right: 30px;}
+                                                .main-sidebar{background:#fff  !important;  color: #000  !important;}
+                                                
+                                                .sidebar-menu li a{
+                                                color: #000  !important;
+                                                }
+                                                .sidebar-menu li a {
+                                                color: #000  !important;
+                                                font-weight: bold;
+                                                }
+                                                .menu>li:hover>a {
+                                                    
+                                                }
+                                                .skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
+                                                    color: #fff !important;
+                                                    background: rgb(76,113,240) !important;
+                                                    background: linear-gradient(90deg, rgba(76,113,240,1) 0%,  rgba(116,144,241,7) 100%) !important;
+                                                    border: 10px solid white !important;
+                                                    border-radius: 20px !important;
+                                                }
+                                                      .skin-blue .sidebar-menu>li>.treeview-menu {
+                                                                  margin: 0 1px;
+                                                                  background: #e8eaeb !important;
+                                                                 
+                                                      }
+                                                        .sidebar-menu .treeview-menu>li>a {
+                                                          padding: 5px 5px 5px 15px;
+                                                          display: block;
+                                                          font-size: 14px;
+                                                          font-weight: normal !important;
+                                                          color: #7D8487 !important;
+                                                        }
+                                                       .sidebar-menu .treeview-menu>li:hover>a {
+                                                           color: #fff !important;
+                                                          border-radius: 20px !important;
+                                                          font-style: normal !important;
+                                                          background: rgb(84,96,101)!important;
+                                                          background: linear-gradient(262deg, rgba(84,96,101,1) 0%, rgba(148,152,154,1) 100%)!important;
+                                                      }
+
+                        '))),
                          tags$style(HTML('.navbar-custom-menu>.navbar-nav>li:last-child>.dropdown-menu { width:10px; font-size:10px; padding:1px; margin:1px;}')),
                          tags$style(HTML('.navbar-custom-menu> .navbar-nav> li:last-child > .dropdown-menu > h4 {width:0px; font-size:0px; padding:0px; margin:0px;}')),
                          tags$style(HTML('.navbar-custom-menu> .navbar-nav> li:last-child > .dropdown-menu > p {width:0px; font-size:0px; padding:0px; margin:0px;}')),
                          
                          tabItems(
                            tabItem(tabName = "Inicio",
-                                          h1("Cantidad de movimientos telúricos en el 2022"),
+                                          tags$div(class="titulo" ,"Dashboard"),
                                           fluidRow(
+                                            column(9,
                                             valueBoxOutput("Cantidad_anio"),
                                             valueBoxOutput("Cantidad_mes"),
-                                            valueBoxOutput("Cantidad_dia")
+                                            valueBoxOutput("Cantidad_dia")),
+                                            
+                                            column(3,
+                                                   valueBoxOutput("CantidadPais", width = "100%" )       
+                                                   )
                                           ),
-                                         
-                                          
-                                          h1("Reportes gráficos de movimientos telúricos"),hr(),
                                           fluidRow(
-                                            column(6, selectInput("regionInicio",
-                                                                  "Seleccione la región:",
+                                            column(3, selectInput("regionInicio",
+                                                                  "Seleccione un región",
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Group))))),
-                                            column(6, selectInput("anioInicio",
+                                            column(3, selectInput("anioInicio",
                                                                   "Seleccione el año:",
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Year)))))
-                                          ),fluidRow(  box(width = "100%", title = "Cantidad de movimientos telúricos por mes", status = "warning", collapsible = TRUE,solidHeader = TRUE,
-                                            column(9,plotlyOutput("graficoBarras_mes")),
-                                            column(3,(tableOutput("datos_grafico_barra" ))))
+                                          ),fluidRow(
+                                            column(9, box(width = "100%",title ="Gráfico mensual de sismos", plotlyOutput("graficoBarras_mes"))),
+                                            column(3,box(width = "100%",title ="Tabla mensual de sismos",(tableOutput("datos_grafico_barra" ))))
                                           )
                                           ,fluidRow( 
-                                            box(title ="Reporte según el tipo de magnitud", status = "warning", collapsible = TRUE,solidHeader = TRUE
+                                            box(title ="Reporte según el tipo de magnitud", status = "warning"
                                                      ,plotlyOutput("grafico_pastel_magnitud"),
                                                      tableOutput("tabla_magnitud")),
-                                            box(title = "Reporte según el tipo de profundidad", status = "warning", collapsible = TRUE,solidHeader = TRUE
+                                            box(title = "Reporte según el tipo de profundidad", status = "warning"
                                                    ,plotlyOutput("grafico_pastel_profundida"),
                                                     tableOutput("tabla_profundida"))
                                                 ),
-                                          fluidRow( h3("Reporte de cantidad de eventos por año"),selectInput("anioRegion",
-                                                                                                "Seleccione el año:",
-                                                                                                c("All",
-                                                                                                  unique(as.character(tabla_base$Year))))
-                                                    ),
-                                           fluidRow( box(width = "100%", title = "Cantidad de eventos en cada región", status = "warning", collapsible = TRUE,solidHeader = TRUE,
+                                           fluidRow( box(width = "100%", title = "Cantidad de eventos por región",
+                                                         selectInput("anioRegion",
+                                                                    "Seleccione el año:",
+                                                                    c("All",
+                                                                    unique(as.character(tabla_base$Year)))),
                                                          column(9,plotlyOutput("graficoRegiones")),
                                                          column(3,(tableOutput("datos_grafico_regiones" )))))
                          )
@@ -145,8 +252,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                   (DT::dataTableOutput("datos"))
                                       ), 
                          tabItem(
-                           tabName = "SNA",
-                           h3("Redes según el tipo de magnitud"),
+                           tabName = "SNAM",
+                           h3("Detalle de redes según el tipo de magnitud"),
                            hr(""),
                            fluidRow(column(4, selectInput("regionSNA",
                                                           "Seleccione la región:",
@@ -155,23 +262,35 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                            )
                            ,
                            fluidRow(
-                             column(4,box(classs="ASDAS", width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Menor entre 1.0 - 3.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMenor"))),
-                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Ligero entre 4.0 - 4.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaLigero"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Moderado entre 5.0 -5.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaModerado"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Fuerte entre 6.0-6.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaFuerte"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Mayor entre 7.0-7.9", status = "warning", solidHeader = TRUE, visNetworkOutput("snaMayor"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Grandes mayor de 8.0", status = "warning", solidHeader = TRUE, visNetworkOutput("snaGran")))
+                             column(4,box(classs="ASDAS", width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Menor entre 1.0 - 3.9", solidHeader = TRUE, visNetworkOutput("snaMenor"))),
+                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Ligero entre 4.0 - 4.9", solidHeader = TRUE, visNetworkOutput("snaLigero"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Moderado entre 5.0 -5.9",  solidHeader = TRUE, visNetworkOutput("snaModerado"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Fuerte entre 6.0-6.9", solidHeader = TRUE, visNetworkOutput("snaFuerte"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Mayor entre 7.0-7.9", solidHeader = TRUE, visNetworkOutput("snaMayor"))),
+                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Grandes mayor de 8.0", solidHeader = TRUE, visNetworkOutput("snaGran")))
                            ),
-                           h3("Redes según el tipo de profundidad"),
-                           hr(),
-                           fluidRow(
-                             column(4,box( width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Superficial hasta 70 km", status = "primary", solidHeader = TRUE, visNetworkOutput("snaSuperficial"))),
-                             column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Intermedio entre 70km y 300 km", status = "primary", solidHeader = TRUE,  visNetworkOutput("snaIntermedio"))),
-                             column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Profundo mayor de 300km", status = "primary", solidHeader = TRUE,visNetworkOutput("snaProfundo")))
-                             
-                           )
-                        
-                         ), tabItem(
+                         ), 
+                         tabItem(
+                           
+                           tabName = "SNAP",
+                                  h3("Detalle de redes según el tipo de profundida"),
+                                  hr(""), 
+                                  fluidRow(column(12, selectInput("regionSNA2",
+                                                                 "Seleccione la región:",
+                                                                 c("All",
+                                                                   unique(as.character(tbl_clasificado_anio_actual$Group))))),
+                                  
+                                  ),
+                                     fluidRow(
+                                       column(4,box( width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Superficial hasta 70 km",solidHeader = TRUE, visNetworkOutput("snaSuperficial"))),
+                                       column(4,box( width = "100%",  collapsible = TRUE,collapsed = TRUE,title = "Intermedio entre 70km y 300 km",solidHeader = TRUE,  visNetworkOutput("snaIntermedio"))),
+                                       column(4,box(width = "100%", collapsible = TRUE,collapsed = TRUE, title = "Profundo mayor de 300km",  solidHeader = TRUE,visNetworkOutput("snaProfundo")))
+                                       
+                                     ),
+                                )
+                         
+                         
+                         , tabItem(
                                 tabName = "GENERAL_MAGNITUD",
                                 box(
                                   title = "SNA QUE REPRESENTA LA RELACIÓN DE MOVIMIENTOS TELÚRICOS EN CADA PAÍS CON EL TIPO DE MAGNITUD ",collapsible = TRUE,
@@ -465,24 +584,32 @@ server <- function(input, output) {
   output$Cantidad_anio <- renderValueBox({
     CANTIDAD_ANIOS<- nrow(tabla_para_inicio %>% filter(Year==anio))
     valueBox(
-      paste0(CANTIDAD_ANIOS), "AÑO", icon = icon("list"),
-      color = "red"
+      paste0(CANTIDAD_ANIOS),  paste("Cantidad de sismos en el año:  ", anio, sep = " " ), icon =  icon("calendar"),color ="orange"
     )
+    # valueBox(
+    #   paste0(CANTIDAD_ANIOS), "AÑO", icon = icon("list")
+    # )
   })
   output$Cantidad_mes <- renderValueBox({
     CANTIDAD_MES  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes ))
     valueBox(
-      paste0(CANTIDAD_MES), "MES", icon = icon("list"),
-      color = "yellow"
+      paste0(CANTIDAD_MES), paste( "Cantidad de sismos en el mes:  ", mes, sep = " " ), icon =  icon("calendar"),color ="green"
     )
   })
-  
   output$Cantidad_dia <- renderValueBox({
     CANTIDAD_DIA  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes & Day==dia))
     valueBox(
-      paste0(CANTIDAD_DIA), "DÍA", icon = icon("list"),
-      color = "green"
+      paste0(CANTIDAD_DIA), paste("Cantidad de sismos en el día: ", dia, sep=" "),icon =  icon("calendar"),color ="yellow"
     )
+  })
+  
+  output$CantidadPais<- renderValueBox({
+    nPais<-nrow(tabla_base[!duplicated(tabla_base$pais), ])
+     
+    valueBox(
+      paste0(nPais), "Cantidad de paises analizados en la aplicación"  , icon =  icon("globe"),color ="olive"
+    )
+
   })
   # TABLAS*************************************************************************************************
   # ---------------------TABLA INFORMACIÓN GENERAL-------------------------------------
@@ -517,6 +644,21 @@ server <- function(input, output) {
        tally() 
      colnames(Informe_barra_mes)<-c("Meses","Cantidad")
      
+     Informe_barra_mes$Meses <- 
+       with(Informe_barra_mes,
+            ifelse(Informe_barra_mes$Meses == 1 , "En",
+                   ifelse(Informe_barra_mes$Meses ==2 , "Feb",
+                          ifelse(Informe_barra_mes$Meses ==3, "Mzo",
+                                 ifelse(Informe_barra_mes$Meses ==4, "Abr",
+                                        ifelse(Informe_barra_mes$Meses ==5 ,"My",
+                                               ifelse(Informe_barra_mes$Meses ==6,"Jun",
+                                                      ifelse(Informe_barra_mes$Meses ==7,"Jul",
+                                                             ifelse(Informe_barra_mes$Meses ==8,"Ag",
+                                                                    ifelse(Informe_barra_mes$Meses ==9,"Sept",
+                                                                           ifelse(Informe_barra_mes$Meses ==10,"Oct",
+                                                                                  ifelse(Informe_barra_mes$Meses ==11,"Nov",
+                                                                                         ifelse(Informe_barra_mes$Meses ==12,"Dic","Null")))))))))))))
+     
      Informe_barra_mes  
   })
   
@@ -528,7 +670,7 @@ server <- function(input, output) {
       data <- data[data$Year ==  input$anioRegion,]
       
     
-    }
+    }else { data <- data[data$Year == "2022",] }
     Informe_barra_mes<-data %>%                     
       group_by(Group) %>%     
       tally() 
@@ -547,7 +689,7 @@ server <- function(input, output) {
     if(input$anioRegion  != "All" )
     {
       data <- data[data$Year == input$anioRegion,]
-    }
+    }else { data <- data[data$Year == "2022",] }
     
     Informe_barra_mes<-data %>%                     
       group_by(Group) %>%     
@@ -999,10 +1141,10 @@ server <- function(input, output) {
   output$snaSuperficial <- renderVisNetwork({
     snaSuperficial<-NULL
     data <-  tbl_clasificado_por_profundidad
-    if(input$regionSNA  != "All" )
+    if(input$regionSNA2  != "All" )
     {
 
-      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Superficial" )
+      data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Superficial" )
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1038,10 +1180,6 @@ server <- function(input, output) {
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
       # shinyjs::hide(id =  "img2")
-    }
-    else
-    {
-      # shinyjs::show(id = "img2")
     }
 
     graficoSnaMenor
@@ -1049,10 +1187,10 @@ server <- function(input, output) {
   output$snaIntermedio <- renderVisNetwork({
     snaIntermedio<-NULL
     data <-  tbl_clasificado_por_profundidad
-    if(input$regionSNA  != "All" )
+    if(input$regionSNA2  != "All" )
     {
 
-      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Intermedio" )
+      data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Intermedio" )
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1089,21 +1227,17 @@ server <- function(input, output) {
                    nodesIdSelection = TRUE)
       # shinyjs::hide(id =  "img2")
     }
-    else
-    {
-      # shinyjs::show(id = "img2")
-    }
 
     graficoSnaMenor
   })
   output$snaProfundo <- renderVisNetwork({
-    snaProfundo<-NULL
+   
     graficoSnaMenor<-NULL
     data <-  tbl_clasificado_por_profundidad
-    if(input$regionSNA  != "All" )
+    if(input$regionSNA2  != "All" )
     {
 
-      data <- data %>% filter(Group==input$regionSNA & tipoDepth.km =="Profundo" )
+      data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Profundo" )
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1138,14 +1272,12 @@ server <- function(input, output) {
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      graficoSnaMenor
 
     }
-    else
-    {
-
-    }
-
+    
     graficoSnaMenor
+    
 
   })
 
