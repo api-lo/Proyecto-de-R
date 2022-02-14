@@ -26,6 +26,7 @@ library(igraph)
 library(threejs)
 library(shinyjs)
 library(leaflet)
+library( shinycssloaders)
 
 header <- dashboardHeader(title = "Pacha-Kuyuy" )
 
@@ -205,15 +206,15 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                                   c("All",
                                                                     unique(as.character(tabla_base$Year)))))
                                           ),fluidRow(
-                                            column(9, box(width = "100%",title ="Gráfico mensual de sismos", plotlyOutput("graficoBarras_mes"))),
-                                            column(3,box(width = "100%",title ="Tabla mensual de sismos",(tableOutput("datos_grafico_barra" ))))
+                                            column(9, box(width = "100%",title ="Gráfico mensual de sismos", withSpinner(plotlyOutput("graficoBarras_mes")))),
+                                            column(3,box(width = "100%",title ="Tabla mensual de sismos",(withSpinner(tableOutput("datos_grafico_barra" )))))
                                           )
                                           ,fluidRow( 
                                             box(title ="Reporte según el tipo de magnitud", status = "warning"
-                                                     ,plotlyOutput("grafico_pastel_magnitud"),
+                                                     ,withSpinner(plotlyOutput("grafico_pastel_magnitud")),
                                                      tableOutput("tabla_magnitud")),
                                             box(title = "Reporte según el tipo de profundidad", status = "warning"
-                                                   ,plotlyOutput("grafico_pastel_profundida"),
+                                                   ,withSpinner(plotlyOutput("grafico_pastel_profundida")),
                                                     tableOutput("tabla_profundida"))
                                                 ),
                                            fluidRow( box(width = "100%", title = "Cantidad de eventos por región",
@@ -544,6 +545,7 @@ server <- function(input, output) {
   # )
   
   output$mymap <- renderLeaflet({
+   
       # leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
       #   clusterOptions = markerClusterOptions(), label = tabla_para_inicio$Mag
       # )
@@ -912,21 +914,18 @@ server <- function(input, output) {
 
 
     }
-    else
-    {
-
-
-    }
 
     graficoSnaMenor
 
   })
   output$snaLigero <- renderVisNetwork({
-    graficoSnaMenor<-NULL
+    graficoSnaLigero<-NULL
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
       data <- data %>% filter(Group==input$regionSNA & tipoM =="Ligero" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -957,21 +956,29 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaLigero<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
-    }
-    graficoSnaMenor
+      }else
+      {
+        
+      }
+      
+      }
+      
+    graficoSnaLigero
   })
   output$snaModerado <- renderVisNetwork({
-    graficoSnaMenor<-NULL
+    graficoSnaModerado<-NULL
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA & tipoM =="Moderado" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1002,21 +1009,27 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaModerado<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+        
+      }
     }
-    graficoSnaMenor
+    graficoSnaModerado
   })
   output$snaFuerte <- renderVisNetwork({
-    graficoSnaMenor<-NULL
+    graficoSnaFuerte<-NULL
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA & tipoM =="Fuerte" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1047,21 +1060,27 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaFuerte<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+        
+      }
     }
-    graficoSnaMenor
+    graficoSnaFuerte
   })
   output$snaMayor <- renderVisNetwork({
-    graficoSnaMenor<-NULL
+    graficoSnaMayor<-NULL
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA & tipoM =="Mayor" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1092,21 +1111,30 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaMayor<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+        
+      }
     }
-    graficoSnaMenor
+    graficoSnaMayor
+   ## validate(
+   ##   need(!is.null(input$regionSNA), "NO HAY DATOS")
+   ## )
   })
   output$snaGran <- renderVisNetwork({
-    graficoSnaMenor<-NULL
+    graficoSnaGran<-NULL
     data <-  tbl_clasificado_anio_actual
     if(input$regionSNA  != "All" )
     {
 
-      data <- data %>% filter(Group==input$regionSNA & tipoM =="Gram" )
+      data <- data %>% filter(Group==input$regionSNA & tipoM =="Gran" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,5,6,7,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1137,23 +1165,29 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaGran<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+        
+      }
     }
-    graficoSnaMenor
+    graficoSnaGran
   })
 
   #----------------------------SOCIAL NETWORK ANALITY PARA LA PROFUNDIDA
   output$snaSuperficial <- renderVisNetwork({
-    snaSuperficial<-NULL
+    graficosnaSuperficial<-NULL
     data <-  tbl_clasificado_por_profundidad
     if(input$regionSNA2  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Superficial" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1183,23 +1217,29 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficosnaSuperficial<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
       # shinyjs::hide(id =  "img2")
+      }else
+      {
+        
+      }
     }
 
-    graficoSnaMenor
+    graficosnaSuperficial
   })
   output$snaIntermedio <- renderVisNetwork({
-    snaIntermedio<-NULL
+    graficoSnaIntermedio<-NULL
     data <-  tbl_clasificado_por_profundidad
     if(input$regionSNA2  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Intermedio" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1229,24 +1269,33 @@ server <- function(input, output) {
       }
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaIntermedio<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+        
+      }
+      
       # shinyjs::hide(id =  "img2")
     }
+    
+    
 
-    graficoSnaMenor
+    graficoSnaIntermedio
   })
   output$snaProfundo <- renderVisNetwork({
-   
-    graficoSnaMenor<-NULL
+  
+    graficoSnaProfundo<-NULL
     data <-  tbl_clasificado_por_profundidad
     if(input$regionSNA2  != "All" )
     {
 
       data <- data %>% filter(Group==input$regionSNA2 & tipoDepth.km =="Profundo" )
+      if(nrow(data)>0)
+      {
       dataSnaM<- subset(data, select = -c(1,2,3,4,5,6,8))
       dataSnaM<-subset(dataSnaM, select = c(2,4,1,3))
       snaMenor <- graph.data.frame(dataSnaM, directed=T)
@@ -1261,8 +1310,10 @@ server <- function(input, output) {
       Pfx<-dataSnaM %>%
         group_by(pais,Group)%>%
         tally()
+     
       for(i in 1:nrow(nodesM))
       {
+        
         if(nodesM$pais[i]=="Superficial" ||
            nodesM$pais[i]=="Intermedio" ||
            nodesM$pais[i]=="Profundo" )
@@ -1274,21 +1325,28 @@ server <- function(input, output) {
         }
 
       }
+      
+      
+      
       nodesM <- data.frame(id =nodesM$pais,group=nodesM$Group , value=nrNodos$n, label=nodesM$pais )
       edgesM <- data.frame(from = c(dfx$from), to = c(dfx$to), value=c(dfx$n), label=c(dfx$n),title=c(dfx$n))
-      graficoSnaMenor<- visNetwork(nodesM,edgesM,
+      graficoSnaProfundo<- visNetwork(nodesM,edgesM,
                                    layout = "layout_in_circle" )%>% visIgraphLayout() %>%
         visEdges( label = edges1$label, physics = FALSE) %>% visNodes(size =nodes1$value ) %>%
         visOptions(highlightNearest = TRUE,
                    nodesIdSelection = TRUE)
+      }else
+      {
+       
+      }
+        
 
     }
     
-    graficoSnaMenor
+    graficoSnaProfundo
     
-
   })
-
+  
 }
 
 shinyApp(ui, server)
