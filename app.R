@@ -40,14 +40,17 @@ sidebar <- dashboardSidebar(collapsed =FALSE ,sidebarMenu(
            menuSubItem("SNA detalle magnitud", icon=icon("caret-right"), tabName = "SNAM"),
            menuSubItem("SNA detalle produndidad", icon=icon("caret-right"), tabName = "SNAP")  ),
   menuItem("Preguntas frecuentes", tabName = "Informacion", icon = icon("question")),
-  menuItem("Conceptos", tabName = "Conceptos", icon = icon("align-justify")),
-  menuItem("Código", tabName = "Conceptos", icon = icon("file-code-o"))
+  menuItem("Código", tabName = "CodegoR", icon = icon("file-code-o"))
   
 ))
 
 body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo de Terremotos'"),
                       
-                      tags$head(tags$style(HTML('
+                      tags$head(
+                        tags$link(rel = "stylesheet", type = "text/css", href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"),
+                        
+                     
+                      tags$style(HTML('
                                        body
                                             {
                                                 background: #cfcfcf;
@@ -176,7 +179,20 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                                         {
                                                       background: rgb(224,94,38); !important;
                                                       background: linear-gradient(262deg,rgba(224,94,38,1) 100%,  rgba(231,183,87,1) 0%) !important;
-                                                          }  
+                                                        }  
+                                                            #btnGraficoUno
+                                                          {
+                                                            color: #fff  !important;
+                                                            background: #416dea  !important;
+                                                            border-radius: 36px;
+                                                          }
+                                                          
+                                                            #btnGraficoDos
+                                                          {
+                                                            color: #fff  !important;
+                                                            background: #3dd28d  !important;
+                                                            border-radius: 36px;
+                                                          }
 
                         '))),
                          tags$style(HTML('.navbar-custom-menu>.navbar-nav>li:last-child>.dropdown-menu { width:10px; font-size:10px; padding:1px; margin:1px;}')),
@@ -186,6 +202,7 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          tabItems(
                            tabItem(tabName = "Inicio",
                                           tags$div(class="titulo" ,"Dashboard"),
+                                         
                                           fluidRow(
                                             column(9,
                                             valueBoxOutput("Cantidad_anio"),
@@ -227,22 +244,40 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                          )
                          , tabItem( 
                            tabName = "Informacion", 
-                           fluidRow(
-                             h4("¿Cuál es nuestro objetivo?"),
-                             p("Tenemos por objetivo procesar los datos de eventos telúricos y presentar información mediante gráficos. Principalmente nuestro objetivo es identificar las zonas con mayor frecuencia de movimientos telúricos por medio del análisis de redes sociales (Social Network Analysis, SNA). Para el efecto, se utilizó el software RStudio y se organizó en tres fases: (1) utilizar web scraping para extraer en tiempo real los registros de movimientos telúricos de las Instituciones de Investigación Incorporadas para la Sismología o IRIS, (2) realizar la exploración y preprocesamiento del conjunto de datos, (3) construir las redes aplicando Social Network Analysis, (4) finalmente, crear este sitio web con shiny para presentar los resultados."),
-                             h4("¿Qué es Social Network Analysis?"),
-                             p("La característica que define el análisis de redes sociales (Social Network Analysis, SNA) es su enfoque en la estructura de las relaciones. El análisis se representa en una red que está formada por un conjunto finito de vértices y las relaciones, definidos en ellos."),
-                             h4("¿Cuáles son las fuentes de datos?"),
-                             p("Los datos de eventos de movimientos telúricos son extraídos en tiempo real de la página oficial de las Instituciones de Investigación Incorporadas para la Sismología o IRIS. IRIS es un consorcio de investigación a nivel de universidades que se dedica a investigar la Tierra y explorar su interior a través de la colección y la distribución de datos sismológicos."),
-                             h4("¿Cuándo se actualizará los gráficos?"),
-                             p("Los gráficos informativos y de redes se actualizan de forma automática cada vez que recargue esta página."),
+                           fluidRow(HTML(" <h1 class=\"text-center\"  style=\"font-size: 70px;font-weight: bold;\"><b>SISTEMA PACHA-KUYUY</b></h1><br>
+                                            <div class=\"container\">
+                                          <h3>¿Cuál es nuestro objetivo?</h3><br>
+                                         <p>Tenemos por objetivo procesar los datos de eventos telúricos y presentar información mediante gráficos. Principalmente nuestro objetivo es identificar las zonas con mayor frecuencia de movimientos telúricos por medio del análisis de redes sociales (Social Network Analysis, SNA). Para el efecto, se utilizó el software RStudio y se organizó en tres fases: (1) utilizar web scraping para extraer en tiempo real los registros de movimientos telúricos de las Instituciones de Investigación Incorporadas para la Sismología o IRIS, (2) realizar la exploración y preprocesamiento del conjunto de datos, (3) construir las redes aplicando Social Network Analysis, (4) finalmente, crear este sitio web con shiny para presentar los resultados.</p><br>
+                                          <h3>¿Qué es Social Network Analysis?</h3><br>
+                                          <p>La característica que define el análisis de redes sociales (Social Network Analysis, SNA) es su enfoque en la estructura de las relaciones. El análisis se representa en una red que está formada por un conjunto finito de vértices y las relaciones, definidos en ellos.</p>
+                                          <h3>¿Cuáles son las fuentes de datos?</h3><br>
+                                         <p>Los datos de eventos de movimientos telúricos son extraídos en tiempo real de la página oficial de las Instituciones de Investigación Incorporadas para la Sismología o IRIS. IRIS es un consorcio de investigación a nivel de universidades que se dedica a investigar la Tierra y explorar su interior a través de la colección y la distribución de datos sismológicos.</p><br>
+                                         <h3>¿Cuándo se actualizará los gráficos?</h3><br>
+                                         <p>Los gráficos informativos y de redes se actualizan de forma automática cada vez que recargue esta página.</p><br>
+                                          </div>
+                                         ")
                             
-                           )
+                           )), tabItem( 
+                             tabName = "CodegoR", 
+                             fluidRow(HTML(" 
+                                        <h1 class=\"text-center\"  style=\"font-size: 70px;font-weight: bold;\"><b>REPOSITORIO</b></h1><br>
+                                        <br>
+                                          <div class=\"row\">
+                                                 <div class=\"col-lg-12 mt-5 pt-5\">
+                                                      <button type=\"button\" class=\"btn btn-dark btn-lg btn-block\" style=\"background:#333333; border-rad;margin-top: 100px;  border-radius: 10px;color:#fff\"><i class=\"bi bi-github\"></i>  Github</button>
+                                                  </div>
+                                                    <div class=\"col-lg-12 mt-5  pt-5\"   style=\" margin-top: 100px\" >
+                                                        <button type=\"button\" style=\"background:#E05E26; border-rad;  border-radius: 10px;color:#333333\" class=\"btn btn-dark btn-lg btn-block\"><i class=\"bi bi-pc-display\"></i>  Repad</button>
+                                                  </div>
+                                          </div>
+                                         ")
+                                      
+                             ),
                            
                          ),
                          tabItem( 
                            tabName = "Mapa", 
-                           leafletOutput("mymap", height = 1000)
+                           leafletOutput("mymap", height = 800)
                          ),
                          tabItem( 
                            tabName = "Dataset", 
@@ -311,8 +346,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                     tags$li(tags$span("Los nodos hacen referencia a los países y los tipos de magnitud")),
                                     tags$li(tags$span("Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de magnitud con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
                                   )),
-                                  p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado.")
-                                  
+                                  p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado."),
+                                  actionButton("btnGraficoUno", "Mostrar la red")
                                 ),
                                 box(title = "SNA",status = "warning",width = "100%",visNetworkOutput("graficoUno"))
                               )
@@ -328,7 +363,8 @@ body <- dashboardBody(   useShinyjs(),  tags$script("document.title = 'Monitoreo
                                tags$li(tags$span("Las interconexiones o edges hacen referencia a la relación entre los nodos de tipo de profundidad con los nodos de países, el grosor de la línea representa la cantidad de eventos")),
                              )),
                              p("El color de los nodos y líneas representa a qué región pertenece, en este caso los eventos de Sudamérica son de color azul, los de Centro América son de color amarillo, los del Sudeste Asiático son rojo, los del Mediterraneo Oriental son de color verde y los nodos del tipo de categoría están representados de color morado.")
-                           ),
+                                , actionButton("btnGraficoDos", "Mostrar la red")
+                             ),
                            box(title = "SNA",status = "warning",width = "100%", visNetworkOutput("graficoDos"))
                           
                          )
@@ -535,15 +571,48 @@ ui <- dashboardPage(header,sidebar,body)
 server <- function(input, output) {
   
   
-  # output$map <- renderLeaflet(
-  #   
-  #   leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
-  #     clusterOptions = markerClusterOptions()
-  #   )
-  #   
-  #   
-  # )
+  observeEvent(input$btnGraficoUno, {
+    output$graficoUno<- renderVisNetwork({graficoUno})
+ 
+    
+  })
+  observeEvent(input$btnGraficoDos, {
+    output$graficoDos<- renderVisNetwork({graficoDos})
+    
+    
+  })
+  #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
+  output$Cantidad_anio <- renderValueBox({
+    CANTIDAD_ANIOS<- nrow(tabla_para_inicio %>% filter(Year==anio))
+    
+    valueBox(
+      paste0(CANTIDAD_ANIOS),  paste("Cantidad de sismos en el año:  ", anio, sep = " " ), icon =  icon("calendar"),color ="orange"
+    )
+    # valueBox(
+    #   paste0(CANTIDAD_ANIOS), "AÑO", icon = icon("list")
+    # )
+  })
+  output$Cantidad_mes <- renderValueBox({
+    CANTIDAD_MES  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes ))
+    valueBox(
+      paste0(CANTIDAD_MES), paste( "Cantidad de sismos en el mes:  ", mes, sep = " " ), icon =  icon("calendar"),color ="green"
+    )
+  })
+  output$Cantidad_dia <- renderValueBox({
+    CANTIDAD_DIA  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes & Day==dia))
+    valueBox(
+      paste0(CANTIDAD_DIA), paste("Cantidad de sismos en el día: ", dia, sep=" "),icon =  icon("calendar"),color ="yellow"
+    )
+  })
   
+  output$CantidadPais<- renderValueBox({
+    nPais<-nrow(tabla_base[!duplicated(tabla_base$pais), ])
+    
+    valueBox(
+      paste0(nPais), "Cantidad de paises analizados en la aplicación"  , icon =  icon("globe"),color ="olive"
+    )
+    
+  })
   output$mymap <- renderLeaflet({
    
       # leaflet(tabla_para_inicio) %>% addTiles() %>% addMarkers(
@@ -591,37 +660,7 @@ server <- function(input, output) {
                    opacity = 0.5)
     
   })
-  #DATOS GENERALES DE DIA MES Y AÑO-----------------------------------------------------------------------
-  output$Cantidad_anio <- renderValueBox({
-    CANTIDAD_ANIOS<- nrow(tabla_para_inicio %>% filter(Year==anio))
-    valueBox(
-      paste0(CANTIDAD_ANIOS),  paste("Cantidad de sismos en el año:  ", anio, sep = " " ), icon =  icon("calendar"),color ="orange"
-    )
-    # valueBox(
-    #   paste0(CANTIDAD_ANIOS), "AÑO", icon = icon("list")
-    # )
-  })
-  output$Cantidad_mes <- renderValueBox({
-    CANTIDAD_MES  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes ))
-    valueBox(
-      paste0(CANTIDAD_MES), paste( "Cantidad de sismos en el mes:  ", mes, sep = " " ), icon =  icon("calendar"),color ="green"
-    )
-  })
-  output$Cantidad_dia <- renderValueBox({
-    CANTIDAD_DIA  <- nrow(tabla_para_inicio %>% filter(Year==anio & Month==mes & Day==dia))
-    valueBox(
-      paste0(CANTIDAD_DIA), paste("Cantidad de sismos en el día: ", dia, sep=" "),icon =  icon("calendar"),color ="yellow"
-    )
-  })
-  
-  output$CantidadPais<- renderValueBox({
-    nPais<-nrow(tabla_base[!duplicated(tabla_base$pais), ])
-     
-    valueBox(
-      paste0(nPais), "Cantidad de paises analizados en la aplicación"  , icon =  icon("globe"),color ="olive"
-    )
-
-  })
+ 
   # TABLAS*************************************************************************************************
   # ---------------------TABLA INFORMACIÓN GENERAL-------------------------------------
   output$datos<-DT::renderDataTable({
@@ -843,9 +882,9 @@ server <- function(input, output) {
       tally()
   })
 
-  output$graficoUno<- renderVisNetwork({graficoUno})
+
   
-  output$graficoDos<- renderVisNetwork({graficoDos})
+
   # GRÁFICOS PASTE*****************************************************************************************
   # -----------------------GRÁFICO DE TERREMOTOS EN MESES ANIO ACTUAL--------------------------------------
   # output$pastelAnioActual <- renderPlotly(
