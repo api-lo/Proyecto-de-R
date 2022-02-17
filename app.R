@@ -27,6 +27,7 @@ library(threejs)
 library(shinyjs)
 library(leaflet)
 library( shinycssloaders)
+library(rsconnect)
 
 header <- dashboardHeader(title = "Pacha-Kuyuy" )
 

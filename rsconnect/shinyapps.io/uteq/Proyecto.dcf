@@ -1,0 +1,14 @@
+name: Proyecto
+title: Proyecto
+username:
+account: uteq
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5669347
+bundleId: 5587004
+url: https://uteq.shinyapps.io/Proyecto/
+when: 1645039998.4487
+lastSyncTime: 1645039998.4487
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: De prueba.R|dgdf.html|ejcuacion.R|gg.R|Rplot.png|Rplot01.png|ui.R
